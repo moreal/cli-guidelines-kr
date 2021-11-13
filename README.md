@@ -1,3 +1,7 @@
+This project is translated [cli-guidelines/cli-guidelines](https://github.com/cli-guidelines/cli-guidelines) to Korean from English.
+
+---
+
 # Command Line Interface Guidelines
 
 An open-source guide to help you write better command-line programs, taking traditional UNIX principles and updating them for the modern day.
