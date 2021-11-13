@@ -29,18 +29,28 @@ Design by [Mark Hurrell](https://mhurrell.co.uk/). Thanks to Andreas Jansson for
 
 ## Foreword {#foreword}
 
-In the 1980s, if you wanted a personal computer to do something for you, you needed to know what to type when confronted with `C:\>` or `~$`.
-Help came in the form of thick, spiral-bound manuals.
-Error messages were opaque.
-There was no Stack Overflow to save you.
-But if you were lucky enough to have internet access, you could get help from Usenet—an early internet community filled with other people who were just as frustrated as you were.
-They could either help you solve your problem, or at least provide some moral support and camaraderie.
+1980년대에 개인용 컴퓨터가 당신을 위해 무언가를 해주기를 바란다면 `C:\>`나 `~$`에 직면했을 때 무엇을 입력해야 하는지 알아야 했습니다.
+도움말은 나선형으로 묶인 두꺼운 설명서의 형태로 제공되었습니다. 
+<!-- In the 1980s, if you wanted a personal computer to do something for you, you needed to know what to type when confronted with `C:\>` or `~$`.
+Help came in the form of thick, spiral-bound manuals. -->
+에러 메시지들은 불투명했습니다.
+<!-- Error messages were opaque. -->
+거기에는 당신을 구해줄 스택오버플로우도 없었습니다.
+<!-- There was no Stack Overflow to save you. -->
+그러나 만약에 인터넷에 접근할 수 있을만큼 충분히 운이 좋았다면 당신은 당신처럼 답답했던 사람들로 차있는 인터넷 커뮤니티, 유즈넷으로 부터 도움을 구할 수 있었을 것입니다.
+<!-- But if you were lucky enough to have internet access, you could get help from Usenet—an early internet community filled with other people who were just as frustrated as you were. -->
+그들은 문제를 해결하는 데 도움을 주거나 혹은 최소한, 교훈과 동료애를 제공할 수 있습니다. 
+<!-- They could either help you solve your problem, or at least provide some moral support and camaraderie. -->
 
-Forty years later, computers have become so much more accessible to everyone, often at the expense of low-level end user control.
-On many devices, there is no command-line access at all, in part because it goes against the corporate interests of walled gardens and app stores.
+40년 후, 컴퓨터들은 종종 로우-레벨 사용자 제어를 희생하며 모두에게 쉽게 더 접근할 수 있게 되었습니다.
+<!-- Forty years later, computers have become so much more accessible to everyone, often at the expense of low-level end user control. -->
+많은 디바이스들에는 커맨드라인 액세스가 없습니다. 부분적으로 클로즈드 플랫폼과 앱 스토어의 기업 이익에 어긋나기 때문입니다.
+<!-- On many devices, there is no command-line access at all, in part because it goes against the corporate interests of walled gardens and app stores. -->
 
-Most people today don’t know what the command line is, much less why they would want to bother with it.
-As computing pioneer Alan Kay said in [a 2017 interview](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now), “Because people don't understand what computing is about, they think they have it in the iPhone, and that illusion is as bad as the illusion that 'Guitar Hero' is the same as a real guitar.”
+오늘날 대부분의 사람들은 커맨드라인이 무엇인지, 왜 그들이 그것을 걱정하기를 원하는 지도 모릅니다.
+<!-- Most people today don’t know what the command line is, much less why they would want to bother with it. -->
+컴퓨팅의 선구자 Alan Kay가 [2017년 인터뷰](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now)에서 말하길, 사람들은 컴퓨팅이 무엇에 대한 것인지 이해하지 못했기 때문에 아이폰에 컴퓨팅이 있다고 생각하고, 그 환성은 '기타 히어로'가 진짜 기타와 같다는 것만큼 나쁜 것입니다.”
+<!-- As computing pioneer Alan Kay said in [a 2017 interview](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now), “Because people don't understand what computing is about, they think they have it in the iPhone, and that illusion is as bad as the illusion that 'Guitar Hero' is the same as a real guitar.” -->
 
 Kay’s “real guitar” isn’t the CLI—not exactly.
 He was talking about ways of programming computers that offer the power of the CLI and that transcend writing software in text files.
