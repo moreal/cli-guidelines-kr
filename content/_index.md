@@ -27,7 +27,7 @@ Design by [Mark Hurrell](https://mhurrell.co.uk/). Thanks to Andreas Jansson for
 [Join us on Discord](https://discord.gg/EbAW5rUCkE) if you want to discuss the guide or CLI design.
 
 
-## Foreword {#foreword}
+## 서문 {#서문}
 
 1980년대에 개인용 컴퓨터가 당신을 위해 무언가를 해주기를 바란다면 `C:\>`나 `~$`에 직면했을 때 무엇을 입력해야 하는지 알아야 했습니다.
 도움말은 나선형으로 묶인 두꺼운 설명서의 형태로 제공되었습니다. 
