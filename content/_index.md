@@ -27,48 +27,79 @@ Design by [Mark Hurrell](https://mhurrell.co.uk/). Thanks to Andreas Jansson for
 [Join us on Discord](https://discord.gg/EbAW5rUCkE) if you want to discuss the guide or CLI design.
 
 
-## Foreword {#foreword}
+## 서문 {#서문}
 
-In the 1980s, if you wanted a personal computer to do something for you, you needed to know what to type when confronted with `C:\>` or `~$`.
-Help came in the form of thick, spiral-bound manuals.
-Error messages were opaque.
-There was no Stack Overflow to save you.
-But if you were lucky enough to have internet access, you could get help from Usenet—an early internet community filled with other people who were just as frustrated as you were.
-They could either help you solve your problem, or at least provide some moral support and camaraderie.
+1980년대에 개인용 컴퓨터가 당신을 위해 무언가를 해주기를 바란다면 `C:\>`나 `~$`에 직면했을 때 무엇을 입력해야 하는지 알아야 했습니다.
+도움말은 나선형으로 묶인 두꺼운 설명서의 형태로 제공되었습니다. 
+<!-- In the 1980s, if you wanted a personal computer to do something for you, you needed to know what to type when confronted with `C:\>` or `~$`.
+Help came in the form of thick, spiral-bound manuals. -->
+에러 메시지들은 이해하기 어려웠습니다.
+<!-- Error messages were opaque. -->
+거기에는 당신을 구해줄 스택오버플로우도 없었습니다.
+<!-- There was no Stack Overflow to save you. -->
+그러나 만약에 인터넷에 접근할 수 있을 만큼 충분히 운이 좋았다면 당신은 당신처럼 답답했던 사람들로 차있는 인터넷 커뮤니티, 유즈넷으로부터 도움을 구할 수 있었을 것입니다.
+<!-- But if you were lucky enough to have internet access, you could get help from Usenet—an early internet community filled with other people who were just as frustrated as you were. -->
+그들은 문제를 해결하는 데 도움을 주거나 혹은 최소한, 교훈과 동료애를 제공할 수 있습니다. 
+<!-- They could either help you solve your problem, or at least provide some moral support and camaraderie. -->
 
-Forty years later, computers have become so much more accessible to everyone, often at the expense of low-level end user control.
-On many devices, there is no command-line access at all, in part because it goes against the corporate interests of walled gardens and app stores.
+40년 후, 컴퓨터들은 종종 로우-레벨 사용자 제어를 희생하며 모두에게 쉽게 더 접근할 수 있게 되었습니다.
+<!-- Forty years later, computers have become so much more accessible to everyone, often at the expense of low-level end user control. -->
+많은 기기들에 커맨드라인 액세스가 전혀 없습니다. 부분적으로 클로즈드 플랫폼과 앱 스토어의 기업 이익에 어긋나기 때문입니다.
+<!-- On many devices, there is no command-line access at all, in part because it goes against the corporate interests of walled gardens and app stores. -->
 
-Most people today don’t know what the command line is, much less why they would want to bother with it.
-As computing pioneer Alan Kay said in [a 2017 interview](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now), “Because people don't understand what computing is about, they think they have it in the iPhone, and that illusion is as bad as the illusion that 'Guitar Hero' is the same as a real guitar.”
+오늘날 대부분 사람들은 커맨드라인이 무엇인지, 왜 그들이 그것을 걱정하기를 원하는지도 모릅니다.
+<!-- Most people today don’t know what the command line is, much less why they would want to bother with it. -->
+컴퓨팅의 선구자 Alan Kay가 [2017년 인터뷰](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now)에서 말하길, 사람들은 컴퓨팅이 무엇에 대한 것인지 이해하지 못했기 때문에 아이폰에 컴퓨팅이 있다고 생각하고, 그 환성은 '기타 히어로'가 진짜 기타와 같다는 것만큼 나쁜 것입니다.”
+<!-- As computing pioneer Alan Kay said in [a 2017 interview](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now), “Because people don't understand what computing is about, they think they have it in the iPhone, and that illusion is as bad as the illusion that 'Guitar Hero' is the same as a real guitar.” -->
 
-Kay’s “real guitar” isn’t the CLI—not exactly.
-He was talking about ways of programming computers that offer the power of the CLI and that transcend writing software in text files.
-There is a belief among Kay’s disciples that we need to break out of a text-based local maximum that we’ve been living in for decades.
+Kay의 “진짜 기타”는 정확히 CLI는 아닙니다.
+<!-- Kay’s “real guitar” isn’t the CLI—not exactly. -->
+그는 CLI의 힘을 제공하고 소프트웨어를 텍스트 파일들로 작성하는 것을 초월하는 컴퓨터 프로그래밍하는 방법들에 대해서 이야기했습니다.
+<!-- He was talking about ways of programming computers that offer the power of the CLI and that transcend writing software in text files. -->
+Kay의 제자들 사이에는 우리가 수십 년간 살아온 텍스트 기반의 로컬 최대치를 벗어나야 하는 믿음이 있습니다.
+<!-- There is a belief among Kay’s disciples that we need to break out of a text-based local maximum that we’ve been living in for decades. -->
 
-It’s exciting to imagine a future where we program computers very differently.
-Even today, spreadsheets are by far the most popular programming language, and the no-code movement is taking off quickly as it attempts to replace some of the intense demand for talented programmers.
+우리가 컴퓨터를 매우 다르게 프로그래밍하는 미래를 상상하는 것은 굉장히 신 나는 일입니다.
+<!-- It’s exciting to imagine a future where we program computers very differently. -->
+심지어 오늘날에도, 스프레드시트는 가장 유명한 프로그래밍 언어이고, 노-코드 움직임은 재능있는 프로그래머들에 대한 심한 수요를 대체하려는 노력에 따라 빠르게 시작되고 있습니다.
+<!-- Even today, spreadsheets are by far the most popular programming language, and the no-code movement is taking off quickly as it attempts to replace some of the intense demand for talented programmers. -->
 
-Yet with its creaky, decades-old constraints and inexplicable quirks, the command line is still the most _versatile_ corner of the computer.
-It lets you pull back the curtain, see what’s really going on, and creatively interact with the machine at a level of sophistication and depth that GUIs cannot afford.
-It’s available on almost any laptop, for anyone who wants to learn it.
-It can be used interactively, or it can be automated.
-And, it doesn’t change as fast as other parts of the system.
-There is creative value in its stability.
+아직 삐걱거리는 소리, 수십 년 전 제약들과 설명할 수 없는 우연들과 함께, 커맨드 라인은 여전히 컴퓨터 중 가장 다재다능한 부분입니다.
+<!-- Yet with its creaky, decades-old constraints and inexplicable quirks, the command line is still the most _versatile_ corner of the computer. -->
+이를 통해 커튼 뒤로 젖히고, 실제 상황을 확인하고, GUI가 감당할 수 없는 수준의 정교함과 깊이로 기계와 창의적으로 의사소통할 수 있습니다.
+<!-- It lets you pull back the curtain, see what’s really going on, and creatively interact with the machine at a level of sophistication and depth that GUIs cannot afford. -->
+그것은 거의 모든 노트북에서나, 그것을 배우고 싶어하는 모두가 가능합니다.
+<!-- It’s available on almost any laptop, for anyone who wants to learn it. -->
+그것은 대화식으로 사용되거나 자동화될 수 있습니다.
+<!-- It can be used interactively, or it can be automated. -->
+그리고 시스템의 다른 부분만큼 빠르게 바뀌지 않습니다.
+<!-- And, it doesn’t change as fast as other parts of the system. -->
+그것의 안정성에 창의적인 가치가 있습니다.
+<!-- There is creative value in its stability. -->
 
-So, while we still have it, we should try to maximize its utility and accessibility.
+그래서 우리가 아직 그것을 가지고 있는 동안, 우리는 그것의 유용성과 접근성을 최대화하는 시도를 해야 합니다.
+<!-- So, while we still have it, we should try to maximize its utility and accessibility. -->
 
-A lot has changed about how we program computers since those early days.
-The command line of the past was _machine-first_: little more than a REPL on top of a scripting platform.
-But as general-purpose interpreted languages have flourished, the role of the shell script has shrunk.
-Today's command line is _human-first_: a text-based UI that affords access to all kinds of tools, systems and platforms.
-In the past, the editor was inside the terminal—today, the terminal is just as often a feature of the editor.
-And there’s been a proliferation of `git`-like multi-tool commands.
-Commands within commands, and high-level commands that perform entire workflows rather than atomic functions.
+그 초창기 이후로 우리가 어떻게 컴퓨터를 프로그래밍하는 방법에 대해 많은 것이 바뀌었습니다.
+<!-- A lot has changed about how we program computers since those early days. -->
+과거의 커맨드 라인은 _머신-퍼스트_ 였습니다. REPL 스크립트 플랫폼의 위에 있는 REPL에 불과합니다.
+<!-- The command line of the past was _machine-first_: little more than a REPL on top of a scripting platform. -->
+그러나 다용 목적의 인터프리터 언어들이 흥함에 따라, 쉘 스크립트의 역할은 줄어들었습니다.
+<!-- But as general-purpose interpreted languages have flourished, the role of the shell script has shrunk. -->
+오늘날의 커맨드라인은 _휴먼-퍼스트_ 입니다. 모든 종류의 도구, 시스템, 플랫폼에 접근을 제공하는 텍스트 기반의 UI입니다.
+<!-- Today's command line is _human-first_: a text-based UI that affords access to all kinds of tools, systems and platforms. -->
+과거에는 에디터가 터미널 안에 있었지만, 오늘날에 터미널은 그저 에디터의 한 기능일 뿐입니다.
+<!-- In the past, the editor was inside the terminal—today, the terminal is just as often a feature of the editor. -->
+그리고 많은 `git` 스러운 다양한 커맨드 도구들이 확산되었습니다.
+<!-- And there’s been a proliferation of `git`-like multi-tool commands. -->
+커맨드 안의 커맨드, 그리고 원자적인 기능 대신 전체 워크플로우를 구성하는 하이레벨 커맨드.
+<!-- Commands within commands, and high-level commands that perform entire workflows rather than atomic functions. -->
 
-Inspired by traditional UNIX philosophy, driven by an interest in encouraging a more delightful and accessible CLI environment, and guided by our experiences as programmers, we decided it was time to revisit the best practices and design principles for building command-line programs.
+보다 쾌적하고 접근성 있는 CLI 환경을 장려하는데 관심을 두고 프로그래머로서의 경험을 바탕으로 전통 UNIX 철학에 영감을 받아, 우리는 커맨드라인 프로그램을 만들기 위한 베스트 프랙티스와 설계 원칙을 다시 살펴봐야 할 때라고 결정했습니다.
+<!-- Inspired by traditional UNIX philosophy, driven by an interest in encouraging a more delightful and accessible CLI environment, and guided by our experiences as programmers, we decided it was time to revisit the best practices and design principles for building command-line programs. -->
 
-Long live the command line!
+커맨드 라인이 영원하길!
+<!-- Long live the command line! -->
 
 ## Introduction {#introduction}
 
