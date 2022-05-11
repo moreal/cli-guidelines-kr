@@ -101,25 +101,38 @@ Kay의 제자들 사이에는 우리가 수십 년간 살아온 텍스트 기반
 커맨드 라인이 영원하길!
 <!-- Long live the command line! -->
 
-## Introduction {#introduction}
+## 소개 {#소개}
 
-This document covers both high-level design philosophy, and concrete guidelines.
-It’s heavier on the guidelines because our philosophy as practitioners is not to philosophize too much.
-We believe in learning by example, so we’ve provided plenty of those.
+이 문서는 높은 수준의 디자인 철학과 구체적인 가이드를 모두 포함합니다.
+<!-- This document covers both high-level design philosophy, and concrete guidelines. -->
+실무자로써 우리의 철학이 그렇게 까지 철학적이지 않기 때문에 가이드에 더 가깝습니다.
+<!-- It’s heavier on the guidelines because our philosophy as practitioners is not to philosophize too much. -->
+우리는 예제를 통해서 배우는 것을 믿고 때문에 우리는 많은 에제들을 제공했습니다.
+<!-- We believe in learning by example, so we’ve provided plenty of those. -->
 
-This guide doesn’t cover full-screen terminal programs like emacs and vim.
-Full-screen programs are niche projects—very few of us will ever be in the position to design one.
+이 가이드는 vim과 emacs같은 전체화면 터미널 프로그램을 포함하지 않습니다.
+<!-- This guide doesn’t cover full-screen terminal programs like emacs and vim. -->
+전체화면 프로그램은 틈새 프로젝트입니다. 우리 중 극소수만이 이를 설계할 수 있습니다.
+<!-- Full-screen programs are niche projects—very few of us will ever be in the position to design one. -->
 
-This guide is also agnostic about programming languages and tooling in general.
+이 가이드는 또한 프로그래밍 언어와 일반적인 도구들에 대해 구애받지 않습니다.
+<!-- This guide is also agnostic about programming languages and tooling in general. -->
 
-Who is this guide for?
-- If you are creating a CLI program and you are looking for principles and concrete best practices for its UI design, this guide is for you.
-- If you are a professional “CLI UI designer,” that’s amazing—we’d love to learn from you.
-- If you’d like to avoid obvious missteps of the variety that go against 40 years of CLI design conventions, this guide is for you.
-- If you want to delight people with your program’s good design and helpful help, this guide is definitely for you.
-- If you are creating a GUI program, this guide is not for you—though you may learn some GUI anti-patterns if you decide to read it anyway.
-- If you are designing an immersive, full-screen CLI port of Minecraft, this guide isn’t for you.
-  (But we can’t wait to see it!)
+이 가이드는 누구를 위한 것인가요?
+<!-- Who is this guide for? -->
+- 만약 당신이 CLI 프로그램을 만들고 있고 당신이 UI 디자인을 위한 원칙과 구체적인 베스트 프랙티스를 찾고 있다면, 이 가이드는 당신을 위한 것입니다.
+<!-- - If you are creating a CLI program and you are looking for principles and concrete best practices for its UI design, this guide is for you. -->
+- 만약 당신이 “전문적인 CLI UI 디자이너”라면 그건 정말 놀랍습니다. 우리가 당신에게 배우고 싶네요.
+<!-- - If you are a professional “CLI UI designer,” that’s amazing—we’d love to learn from you. -->
+- 만약 당신이 40년간의 CLI 디자인 규칙에 어긋나는 실수를 피하고 싶다면, 이 가이드는 당신을 위한 것입니다.
+<!-- - If you’d like to avoid obvious missteps of the variety that go against 40 years of CLI design conventions, this guide is for you. -->
+- 만약 당신이 만드는 프로그램의 좋은 디자인과 유용한 도움말로 사람들을 기쁘게 해주고 싶다면, 이 가이드는 확실히 당신을 위한 것입니다.
+<!-- - If you want to delight people with your program’s good design and helpful help, this guide is definitely for you. -->
+- 만약 당신이 GUI 프로그램을 만들고 있다면, 이 가이드는 당신을 위한 것이 아닙니다. 어쨋든 당신이 읽기로 결정했다면 GUI의 안티패턴들을 배울 수도 있습니다.
+<!-- - If you are creating a GUI program, this guide is not for you—though you may learn some GUI anti-patterns if you decide to read it anyway. -->
+- 만약 당신이 마인크래프트의 풀스크린 CLI 포팅 버전을 설계하고 있다면, 이 가이드는 당신을 위한 것이 아닙니다. (하지만 우리는 그것을 빨리 보고 싶습니다!)
+<!-- - If you are designing an immersive, full-screen CLI port of Minecraft, this guide isn’t for you.
+  (But we can’t wait to see it!) -->
 
 ## Philosophy {#philosophy}
 
