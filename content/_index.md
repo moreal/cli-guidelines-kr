@@ -134,64 +134,97 @@ Kay의 제자들 사이에는 우리가 수십 년간 살아온 텍스트 기반
 <!-- - If you are designing an immersive, full-screen CLI port of Minecraft, this guide isn’t for you.
   (But we can’t wait to see it!) -->
 
-## Philosophy {#philosophy}
+## 철학 {#철학}
 
-These are what we consider to be the fundamental principles of good CLI design.
+이것들은 우리가 좋은 CLI 디자인의 기본 원칙이라고 생각하는 것입니다.
+<!-- These are what we consider to be the fundamental principles of good CLI design. -->
 
-### Human-first design {#human-first-design}
+### 사람 우선 디자인 {#사람-우선-디자인}
 
-Traditionally, UNIX commands were written under the assumption they were going to be used primarily by other programs.
-They had more in common with functions in a programming language than with graphical applications.
+전통적으로 UNIX 커맨드들은 주로 다른 프로그램들에 의해 사용된다는 가정하에 작성되었습니다.
+<!-- Traditionally, UNIX commands were written under the assumption they were going to be used primarily by other programs. -->
+그것들은 그래픽 어플리케이션들에 비해 프로그래밍 언어의 함수와 더 많은 공통점이 있습니다.
+<!-- They had more in common with functions in a programming language than with graphical applications. -->
 
-Today, even though many CLI programs are used primarily (or even exclusively) by humans, a lot of their interaction design still carries the baggage of the past.
-It’s time to shed some of this baggage: if a command is going to be used primarily by humans, it should be designed for humans first.
+오늘날에 많은 CLI 프로그램들이 주로 (혹은 독점적으로) 사람들에 의해서 사용됨에도 불구하고, 많은 인터랙션 디자인들이 여전히 과거의 짐을 갖고 다닙니다.
+<!-- Today, even though many CLI programs are used primarily (or even exclusively) by humans, a lot of their interaction design still carries the baggage of the past. -->
+이 짐들을 버릴 시점입니다. 만약에 커맨드에 주로 사람들에 의해 사용될 것이라면 그건 사람을 우선해서 디자인되어야 합니다.
+<!-- It’s time to shed some of this baggage: if a command is going to be used primarily by humans, it should be designed for humans first. -->
 
-### Simple parts that work&nbsp;together {#simple-parts-that-work-together}
+### 함께 동작하는 작은 부품들 {#함께-동작하는-작은-부품들}
 
-A core tenet of [the original UNIX philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) is the idea that small, simple programs with clean interfaces can be combined to build larger systems.
-Rather than stuff more and more features into those programs, you make programs that are modular enough to be recombined as needed.
+원래 유닉스 철학의 핵심은 큰 시스템을 만들기 위해 깔끔한 인터페이스의 작고 간단한 프로그램들이 조합할 수 있다는 아이디어입니다.
+<!-- A core tenet of [the original UNIX philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) is the idea that small, simple programs with clean interfaces can be combined to build larger systems. -->
+이러한 프로그램에 점점 더 많은 기능을 넣는 대신 필요에 따라 다시 결합할 수 있을 만큼 충분히 모듈화된 프로그램을 만듭니다.
+<!-- Rather than stuff more and more features into those programs, you make programs that are modular enough to be recombined as needed. -->
 
-In the old days, pipes and shell scripts played a crucial role in the process of composing programs together.
-Their role might have diminished with the rise of general-purpose interpreted languages, but they certainly haven’t gone away.
-What’s more, large-scale automation—in the form of CI/CD, orchestration and configuration management—has flourished.
-Making programs composable is just as important as ever.
+옛날에는 파이프와 쉘 스크립트는 중대한 프로그램들을 같이 엮는 과정에 중대한 역할을 했었습니다.
+<!-- In the old days, pipes and shell scripts played a crucial role in the process of composing programs together. -->
+그것들의 역할은 다용도 인터프리터 언어들의 흥행으로 감소해 갔지만 완전히 사라지지는 않았습니다.
+<!-- Their role might have diminished with the rise of general-purpose interpreted languages, but they certainly haven’t gone away. -->
+또한 CI/CD, 오케스트레이션 그리고 설정관리 등의 형태로 큰 크기의 자동화들이 번성해왔습니다.
+<!-- What’s more, large-scale automation—in the form of CI/CD, orchestration and configuration management—has flourished. -->
+프로그램을 조합 가능하게 만드는 것은 그 어느 때보다 중요합니다.
+<!-- Making programs composable is just as important as ever. -->
 
-Fortunately, the long-established conventions of the UNIX environment, designed for this exact purpose, still help us today.
-Standard in/out/err, signals, exit codes and other mechanisms ensure that different programs click together nicely.
-Plain, line-based text is easy to pipe between commands.
-JSON, a much more recent invention, affords us more structure when we need it, and lets us more easily integrate command-line tools with the web.
+운이 좋게도, 오랫동안 확립된 유닉스 환경의 컨벤션은 이 목적을 위해 디자인 되었고 오늘날에도 우리를 도와주고 있습니다.
+<!-- Fortunately, the long-established conventions of the UNIX environment, designed for this exact purpose, still help us today. -->
+표준 입력, 표준 출력, 표준 에러, 시그널, 종료 코드 및 다른 메커니즘들은 다른 프로그램들이 함께 잘 클릭되도록 합니다.
+<!-- Standard in/out/err, signals, exit codes and other mechanisms ensure that different programs click together nicely. -->
+평문, 줄 기반의 텍스트는 두 커맨드간에 파이프로 넘기기에 좋습니다.
+<!-- Plain, line-based text is easy to pipe between commands. -->
+JSON은 더 최근의 생겨났고, 필요할 때 더 많은 구조를 제공하고, 명령어 도구와 웹을 쉽게 통합할 수 있게 해줍니다.
+<!-- JSON, a much more recent invention, affords us more structure when we need it, and lets us more easily integrate command-line tools with the web. -->
 
-Whatever software you’re building, you can be absolutely certain that people will use it in ways you didn’t anticipate.
-Your software _will_ become a part in a larger system—your only choice is over whether it will be a well-behaved part.
+어떤 소프트웨어를 만들던, 사람들이 예상하지 않은 방법으로 사용할 것임을 절대적으로 확신할 수 있습니다.
+<!-- Whatever software you’re building, you can be absolutely certain that people will use it in ways you didn’t anticipate. -->
+여려분의 소프트웨어가 큰 프로그램의 일부가 _될 것이고_, 당신의 유일한 선택은 그것이 제대로 작동하는 부분이 될 것인지에 달려 있습니다.
+<!-- Your software _will_ become a part in a larger system—your only choice is over whether it will be a well-behaved part. -->
 
-Most importantly, designing for composability does not need to be at odds with designing for humans first.
-Much of the advice in this document is about how to achieve both.
+가장 중요한 것은 조합성을 디자인 하는 것은 사람 우선 디자인에 상충할 필요가 없다는 것입니다.
+<!-- Most importantly, designing for composability does not need to be at odds with designing for humans first. -->
+이 문서의 많은 충고들은 그 둘을 어떻게 달성할 것인지에 대한 것들입니다.
+<!-- Much of the advice in this document is about how to achieve both. -->
 
-### Consistency across programs {#consistency-across-programs}
+### 프로그램 간의 일관성 {#프로그램-간의-일관성}
 
-The terminal’s conventions are hardwired into our fingers.
-We had to pay an upfront cost by learning about command line syntax, flags, environment variables and so on, but it pays off in long-term efficiency… as long as programs are consistent.
+터미널의 컨벤션은 우리들의 손가락에 내장되어 있습니다.
+<!-- The terminal’s conventions are hardwired into our fingers. -->
+우리는 커맨드 라인 문법, 플래그, 환경 변수들에 대해 배우는 초기 비용을 지불해야 하지만 프로그램들이 일관성있는 한 장기적으로 효율적입니다
+<!-- We had to pay an upfront cost by learning about command line syntax, flags, environment variables and so on, but it pays off in long-term efficiency… as long as programs are consistent. -->
 
-Where possible, a CLI should follow patterns that already exist.
-That’s what makes CLIs intuitive and guessable; that’s what makes users efficient.
+가능하다면 CLI는 이미 있는 것들의 패턴을 따라야 합니다.
+<!-- Where possible, a CLI should follow patterns that already exist. -->
+이것이 CLI를 직관적이고 추측 가능하게 만드는 것입니다. 그것이 사용자를 효율적으로 만드는 것입니다.
+<!-- That’s what makes CLIs intuitive and guessable; that’s what makes users efficient. -->
 
-That being said, sometimes consistency conflicts with ease of use.
-For example, many long-established UNIX commands don't output much information by default, which can cause confusion or worry for people less familiar with the command line.
+그것은 때때로 일관성이 사용성과 충돌할 때도 있습니다.
+<!-- That being said, sometimes consistency conflicts with ease of use. -->
+예를 들어, 많은 오랫동안 자리 잡은 UNIX 커맨드들은 기본적으로 많은 정보를 출력하지 않고 커맨드 라인에 덜 익숙한 사람들에게 혼란 혹은 걱정을 유발할 수 있습니다.
+<!-- For example, many long-established UNIX commands don't output much information by default, which can cause confusion or worry for people less familiar with the command line. -->
 
-When following convention would compromise a program’s usability, it might be time to break with it—but such a decision should be made with care.
+규칙을 따르는 것이 프로그램의 사용성을 손상시킬 때 그것을 중단할 때가 되었을 수도 있지만 그러한 결정은 신중하게 내려야 합니다.
+<!-- When following convention would compromise a program’s usability, it might be time to break with it—but such a decision should be made with care. -->
 
-### Saying (just) enough {#saying-just-enough}
+### (그냥) 충분히 말하기 {#그냥-충분히-말하기}
 
-The terminal is a world of pure information.
-You could make an argument that information is the interface—and that, just like with any interface, there’s often too much or too little of it.
+터미널은 순수 정보들의 세게입니다.
+<!-- The terminal is a world of pure information. -->
 
-A command is saying too little when it hangs for several minutes and the user starts to wonder if it’s broken.
-A command is saying too much when it dumps pages and pages of debugging output, drowning what’s truly important in an ocean of loose detritus.
-The end result is the same: a lack of clarity, leaving the user confused and irritated.
+정보가 인터페이스이며, 다른 인터페이스와 마찬가지로 정보가 너무 많거나 너무 적다고 주장할 수 있습니다.
+<!-- You could make an argument that information is the interface—and that, just like with any interface, there’s often too much or too little of it. -->
 
-It can be very difficult to get this balance right, but it’s absolutely crucial if software is to empower and serve its users.
+어떤 커맨드는 몇 분이나 걸리고 유저들이 그게 고장난 것이 궁금해하기 시작할 때 너무 작게 말합니다.
+<!-- A command is saying too little when it hangs for several minutes and the user starts to wonder if it’s broken. -->
+어떤 커맨드는 디버깅 출력의 페이지와 페이지를 덤프할 때 너무 많은 말을 해서 느슨한 쓰레기의 바다에서 진정으로 중요한 것을 익사시킵니다.
+<!-- A command is saying too much when it dumps pages and pages of debugging output, drowning what’s truly important in an ocean of loose detritus. -->
+결론은 다음과 같다: 명확성의 부족은 유저에게 혼란과 짜증을 남긴다.
+<!-- The end result is the same: a lack of clarity, leaving the user confused and irritated. -->
 
-### Ease of discovery {#ease-of-discovery}
+이 균형을 잘 가지는 것은 어려울 수 있지만 사용자들에게 소프트웨어를 제공하고 권한을 주기 위해서는 절대적으로 중요하다.
+<!-- It can be very difficult to get this balance right, but it’s absolutely crucial if software is to empower and serve its users. -->
+
+### 검색 용이성 {#검색-용이성}
 
 When it comes to making functionality discoverable, GUIs have the upper hand.
 Everything you can do is laid out in front of you on the screen, so you can find what you need without having to learn anything, and perhaps even discover things you didn’t know were possible.
