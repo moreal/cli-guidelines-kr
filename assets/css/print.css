@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
    font-family: 'CLIG'; 
    font-style: normal; 
    font-weight: 400; 
@@ -27,7 +27,8 @@
    font-style: normal; 
    font-weight: 800; 
    src: url(https://fonts.clig.dev/EditorialNew-Regular.woff2) format('woff2');
-}
+} */
+
 @font-face {
    font-family: 'CLIG-PRE'; 
    font-style: normal; 
@@ -40,6 +41,8 @@
    font-weight: 600; 
    src: url(https://fonts.clig.dev/iAWriterMonoS-Bold.woff2) format('woff2');
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 * {
    font-family: inherit;
@@ -59,7 +62,7 @@
 }
 
 html {
-   font-family: 'CLIG';
+   font-family: 'Noto Sans KR', serif;
    font-weight: 400;
    text-align: left;
    color: black;
