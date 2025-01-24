@@ -30,9 +30,11 @@
         gtag('config', 'G-DLXNEPQY85');
         </script>
 
-        {{ $css := resources.Get "css/main.css" | resources.ToCSS }}
-        <link rel="stylesheet" media="screen" href="/css/main.css">
-        <link rel="stylesheet" media="print" href="/css/print.css">
+        {{ $style := resources.Get "css/main.css" | toCSS | minify | fingerprint }}
+        {{ $printStyle := resources.Get "css/print.css" | toCSS | minify | fingerprint }}
+
+        <link rel="stylesheet" media="screen" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+        <link rel="stylesheet" media="print" href="{{ $printStyle.RelPermalink }}" integrity="{{ $printStyle.Data.Integrity }}">
     </head>
     <body>
         {{- block "main" . }}{{- end }}
