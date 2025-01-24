@@ -1,382 +1,311 @@
-# Command Line Interface Guidelines
+# 명령줄 인터페이스 가이드라인 {#command-line-interface-guidelines}
 
-An [open-source](https://github.com/cli-guidelines/cli-guidelines) guide to help you write better command-line programs, taking traditional UNIX principles and updating them for the modern day.  
+전통적인 UNIX 원칙을 현대에 맞게 업데이트하여 더 나은 명령줄 프로그램을 작성하는 데 도움을 주는 [오픈소스](https://github.com/cli-guidelines/cli-guidelines) 가이드입니다.
 
-## Authors {#authors}
+## 작성자들 {#authors}
 
 **Aanand Prasad** \
-Engineer at Squarespace, co-creator of Docker Compose. \
+Squarespace 엔지니어, Docker Compose 공동 제작자. \
 [@aanandprasad](https://twitter.com/aanandprasad)
 
 **Ben Firshman** \
-Co-creator [Replicate](https://replicate.ai/), co-creator of Docker Compose. \
+[Replicate](https://replicate.ai/) 공동 제작자, Docker Compose 공동 제작자. \
 [@bfirsh](https://twitter.com/bfirsh)
 
 **Carl Tashian** \
-Developer Advocate at [Smallstep](https://smallstep.com/), first engineer at Zipcar, co-founder Trove. \
+[Smallstep](https://smallstep.com/) Developer Advocate, Zipcar의 첫 번째 엔지니어, Trove 공동 설립자. \
 [tashian.com](https://tashian.com/) [@tashian](https://twitter.com/tashian)
 
 **Eva Parish** \
-Technical Writer at Squarespace, O’Reilly contributor.\
+Squarespace 테크니컬 라이터, O'Reilly 기고자.\
 [evaparish.com](https://evaparish.com/) [@evpari](https://twitter.com/evpari)
 
-Design by [Mark Hurrell](https://mhurrell.co.uk/). Thanks to Andreas Jansson for early contributions, and Andrew Reitz, Ashley Williams, Brendan Falk, Chester Ramey, Dj Walker-Morgan, Jacob Maine, James Coglan, Michael Dwan, and Steve Klabnik for reviewing drafts.
+[Mark Hurrell](https://mhurrell.co.uk/)이 디자인 해주셨습니다. 초기 기여를 해준 Andreas Jansson과 초안을 검토해 준 Andrew Reitz, Ashley Williams, Brendan Falk, Chester Ramey, Dj Walker-Morgan, Jacob Maine, James Coglan, Michael Dwan, Steve Klabnik 에게 감사드립니다.
 
 <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=cli-guidelines&repo=cli-guidelines&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
 
-[Join us on Discord](https://discord.gg/EbAW5rUCkE) if you want to discuss the guide or CLI design.
+가이드나 CLI 디자인에 대해 논의하고 싶다면 [Discord에 참여](https://discord.gg/EbAW5rUCkE)해 주세요.
 
 
-## 서문 {#서문}
+## 서문 {#foreword}
 
-1980년대에 개인용 컴퓨터가 당신을 위해 무언가를 해주기를 바란다면 `C:\>`나 `~$`에 직면했을 때 무엇을 입력해야 하는지 알아야 했습니다.
-도움말은 나선형으로 묶인 두꺼운 설명서의 형태로 제공되었습니다. 
-<!-- In the 1980s, if you wanted a personal computer to do something for you, you needed to know what to type when confronted with `C:\>` or `~$`.
-Help came in the form of thick, spiral-bound manuals. -->
-에러 메시지들은 이해하기 어려웠습니다.
-<!-- Error messages were opaque. -->
-거기에는 당신을 구해줄 스택오버플로우도 없었습니다.
-<!-- There was no Stack Overflow to save you. -->
-그러나 만약에 인터넷에 접근할 수 있을 만큼 충분히 운이 좋았다면 당신은 당신처럼 답답했던 사람들로 차있는 인터넷 커뮤니티, 유즈넷으로부터 도움을 구할 수 있었을 것입니다.
-<!-- But if you were lucky enough to have internet access, you could get help from Usenet—an early internet community filled with other people who were just as frustrated as you were. -->
-그들은 문제를 해결하는 데 도움을 주거나 혹은 최소한, 교훈과 동료애를 제공할 수 있습니다. 
-<!-- They could either help you solve your problem, or at least provide some moral support and camaraderie. -->
+1980년대에는 개인용 컴퓨터로 작업을 하려면 `C:\>` 또는 `~$`가 나타났을 때 무엇을 입력해야 하는지 알아야 했습니다.
+도움말은 두꺼운 스프링 제본 매뉴얼 형태로 제공되었습니다.
+오류 메시지는 불투명했습니다.
+Stack Overflow 같은 구원자도 없었습니다.
+하지만 운 좋게 인터넷에 접속할 수 있었다면, 당신만큼이나 좌절감을 느끼는 다른 사람들이 모여 있는 초기 인터넷 커뮤니티인 Usenet에서 도움을 받을 수 있었습니다.
+그들은 문제 해결을 도와주거나, 최소한 정신적 지지와 동료애를 제공해줄 수 있었습니다.
 
-40년 후, 컴퓨터들은 종종 로우-레벨 사용자 제어를 희생하며 모두에게 쉽게 더 접근할 수 있게 되었습니다.
-<!-- Forty years later, computers have become so much more accessible to everyone, often at the expense of low-level end user control. -->
-많은 기기들에 커맨드라인 액세스가 전혀 없습니다. 부분적으로 클로즈드 플랫폼과 앱 스토어의 기업 이익에 어긋나기 때문입니다.
-<!-- On many devices, there is no command-line access at all, in part because it goes against the corporate interests of walled gardens and app stores. -->
+40년이 지난 지금, 컴퓨터는 모든 사람이 훨씬 더 쉽게 접근할 수 있게 되었지만, 그 대가로 최종 사용자의 저수준 제어 기능은 희생되었습니다.
+많은 기기에서는 폐쇄된 생태계와 앱스토어라는 기업의 이해관계에 반하기 때문에 커맨드라인 접근이 전혀 불가능합니다.
 
-오늘날 대부분 사람들은 커맨드라인이 무엇인지, 왜 그들이 그것을 걱정하기를 원하는지도 모릅니다.
-<!-- Most people today don’t know what the command line is, much less why they would want to bother with it. -->
-컴퓨팅의 선구자 Alan Kay가 [2017년 인터뷰](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now)에서 말하길, 사람들은 컴퓨팅이 무엇에 대한 것인지 이해하지 못했기 때문에 아이폰에 컴퓨팅이 있다고 생각하고, 그 환성은 '기타 히어로'가 진짜 기타와 같다는 것만큼 나쁜 것입니다.”
-<!-- As computing pioneer Alan Kay said in [a 2017 interview](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now), “Because people don't understand what computing is about, they think they have it in the iPhone, and that illusion is as bad as the illusion that 'Guitar Hero' is the same as a real guitar.” -->
+오늘날 대부분의 사람들은 커맨드라인이 무엇인지조차 모르며, 이를 사용해야 하는 이유는 더더욱 모릅니다.
+컴퓨터 공학의 선구자인 Alan Kay가 [2017년 인터뷰](https://www.fastcompany.com/40435064/what-alan-kay-thinks-about-the-iphone-and-technology-now)에서 말했듯이, "사람들은 컴퓨팅이 무엇인지 이해하지 못하기 때문에 아이폰만으로도 충분하다고 생각하는데, 이는 '기타 히어로'가 진짜 기타와 같다고 생각하는 것만큼이나 나쁜 착각입니다."
 
-Kay의 “진짜 기타”는 정확히 CLI는 아닙니다.
-<!-- Kay’s “real guitar” isn’t the CLI—not exactly. -->
-그는 CLI의 힘을 제공하고 소프트웨어를 텍스트 파일들로 작성하는 것을 초월하는 컴퓨터 프로그래밍하는 방법들에 대해서 이야기했습니다.
-<!-- He was talking about ways of programming computers that offer the power of the CLI and that transcend writing software in text files. -->
-Kay의 제자들 사이에는 우리가 수십 년간 살아온 텍스트 기반의 로컬 최대치를 벗어나야 하는 믿음이 있습니다.
-<!-- There is a belief among Kay’s disciples that we need to break out of a text-based local maximum that we’ve been living in for decades. -->
+Kay가 말하는 "진짜 기타"는 (엄밀히 말하자면) CLI는 아닙니다.
+그는 CLI의 파워를 제공하고 텍스트 파일로 소프트웨어를 작성하는 것을 넘어서는 컴퓨터 프로그래밍 방식에 대해 이야기하고 있었습니다.
+Kay의 추종자들 사이에서는 우리가 수십 년 동안 머물러 있던 텍스트 기반의 지역 최대값에서 벗어나야 한다는 믿음이 있습니다. 우리가 컴퓨터를 매우 다르게 프로그래밍하는 미래를 상상하는 것은 흥미진진합니다.
 
-우리가 컴퓨터를 매우 다르게 프로그래밍하는 미래를 상상하는 것은 굉장히 신 나는 일입니다.
-<!-- It’s exciting to imagine a future where we program computers very differently. -->
-심지어 오늘날에도, 스프레드시트는 가장 유명한 프로그래밍 언어이고, 노-코드 움직임은 재능있는 프로그래머들에 대한 심한 수요를 대체하려는 노력에 따라 빠르게 시작되고 있습니다.
-<!-- Even today, spreadsheets are by far the most popular programming language, and the no-code movement is taking off quickly as it attempts to replace some of the intense demand for talented programmers. -->
+우리가 컴퓨터를 매우 다르게 프로그래밍하는 미래를 상상하는 것은 흥미진진합니다.
+오늘날에도 스프레드시트는 단연코 가장 인기 있는 프로그래밍 언어이며, 유능한 프로그래머에 대한 치열한 수요를 대체하려는 노코드 운동이 빠르게 성장하고 있습니다.
 
-아직 삐걱거리는 소리, 수십 년 전 제약들과 설명할 수 없는 우연들과 함께, 커맨드 라인은 여전히 컴퓨터 중 가장 다재다능한 부분입니다.
-<!-- Yet with its creaky, decades-old constraints and inexplicable quirks, the command line is still the most _versatile_ corner of the computer. -->
-이를 통해 커튼 뒤로 젖히고, 실제 상황을 확인하고, GUI가 감당할 수 없는 수준의 정교함과 깊이로 기계와 창의적으로 의사소통할 수 있습니다.
-<!-- It lets you pull back the curtain, see what’s really going on, and creatively interact with the machine at a level of sophistication and depth that GUIs cannot afford. -->
-그것은 거의 모든 노트북에서나, 그것을 배우고 싶어하는 모두가 가능합니다.
-<!-- It’s available on almost any laptop, for anyone who wants to learn it. -->
-그것은 대화식으로 사용되거나 자동화될 수 있습니다.
-<!-- It can be used interactively, or it can be automated. -->
-그리고 시스템의 다른 부분만큼 빠르게 바뀌지 않습니다.
-<!-- And, it doesn’t change as fast as other parts of the system. -->
-그것의 안정성에 창의적인 가치가 있습니다.
-<!-- There is creative value in its stability. -->
+하지만 수십 년 된 낡은 제약과 설명할 수 없는 특이점에도 불구하고, 커맨드라인은 여전히 컴퓨터에서 가장 _다재다능한_ 영역입니다.
+커맨드라인은 GUI가 제공할 수 없는 수준의 정교함과 깊이로 커튼을 젖히고 실제로 무슨 일이 일어나고 있는지 보며, 기계와 창의적으로 상호작용할 수 있게 해줍니다.
+커맨드라인은 배우고자 하는 사람이라면 누구나 거의 모든 노트북에서 사용할 수 있습니다.
+대화식으로 사용할 수도 있고 자동화할 수도 있습니다.
+그리고 시스템의 다른 부분만큼 빠르게 변하지 않습니다.
+이러한 안정성에는 창의적 가치가 있습니다.
 
-그래서 우리가 아직 그것을 가지고 있는 동안, 우리는 그것의 유용성과 접근성을 최대화하는 시도를 해야 합니다.
-<!-- So, while we still have it, we should try to maximize its utility and accessibility. -->
+따라서 우리가 아직 커맨드라인을 가지고 있는 동안, 그 유용성과 접근성을 최대화하도록 노력해야 합니다.
 
-그 초창기 이후로 우리가 어떻게 컴퓨터를 프로그래밍하는 방법에 대해 많은 것이 바뀌었습니다.
-<!-- A lot has changed about how we program computers since those early days. -->
-과거의 커맨드 라인은 _머신-퍼스트_ 였습니다. REPL 스크립트 플랫폼의 위에 있는 REPL에 불과합니다.
-<!-- The command line of the past was _machine-first_: little more than a REPL on top of a scripting platform. -->
-그러나 다용 목적의 인터프리터 언어들이 흥함에 따라, 쉘 스크립트의 역할은 줄어들었습니다.
-<!-- But as general-purpose interpreted languages have flourished, the role of the shell script has shrunk. -->
-오늘날의 커맨드라인은 _휴먼-퍼스트_ 입니다. 모든 종류의 도구, 시스템, 플랫폼에 접근을 제공하는 텍스트 기반의 UI입니다.
-<!-- Today's command line is _human-first_: a text-based UI that affords access to all kinds of tools, systems and platforms. -->
-과거에는 에디터가 터미널 안에 있었지만, 오늘날에 터미널은 그저 에디터의 한 기능일 뿐입니다.
-<!-- In the past, the editor was inside the terminal—today, the terminal is just as often a feature of the editor. -->
-그리고 많은 `git` 스러운 다양한 커맨드 도구들이 확산되었습니다.
-<!-- And there’s been a proliferation of `git`-like multi-tool commands. -->
-커맨드 안의 커맨드, 그리고 원자적인 기능 대신 전체 워크플로우를 구성하는 하이레벨 커맨드.
-<!-- Commands within commands, and high-level commands that perform entire workflows rather than atomic functions. -->
+초창기 이후로 컴퓨터를 프로그래밍하는 방식이 많이 변했습니다.
+과거의 커맨드라인은 _기계 우선_ 이었습니다, 스크립팅 플랫폼 위에 있는 REPL에 불과했죠.
+하지만 범용 인터프리터 언어가 번성하면서 셸 스크립트의 역할은 축소되었습니다.
+오늘날의 커맨드라인은 _사람 우선_ 입니다. 모든 종류의 도구, 시스템, 플랫폼에 대한 액세스를 제공하는 텍스트 기반 UI입니다.
+과거에는 에디터가 터미널 안에 있었지만, 오늘날에는 터미널이 에디터의 기능인 경우가 많습니다. 
+그리고 `git`과 같은 멀티툴 명령어가 급증했습니다.
+명령어 안의 명령어, 그리고 원자적 기능이 아닌 전체 워크플로우를 수행하는 고수준 명령어들이 있습니다.
 
-보다 쾌적하고 접근성 있는 CLI 환경을 장려하는데 관심을 두고 프로그래머로서의 경험을 바탕으로 전통 UNIX 철학에 영감을 받아, 우리는 커맨드라인 프로그램을 만들기 위한 베스트 프랙티스와 설계 원칙을 다시 살펴봐야 할 때라고 결정했습니다.
-<!-- Inspired by traditional UNIX philosophy, driven by an interest in encouraging a more delightful and accessible CLI environment, and guided by our experiences as programmers, we decided it was time to revisit the best practices and design principles for building command-line programs. -->
+전통적인 UNIX 철학에서 영감을 받고, 더 즐겁고 접근하기 쉬운 CLI 환경을 장려하는 데 관심을 두며, 프로그래머로서의 경험을 바탕으로, 우리는 커맨드라인 프로그램을 만드는 모범 사례와 설계 원칙을 재검토할 때가 되었다고 판단했습니다.
 
-커맨드 라인이 영원하길!
-<!-- Long live the command line! -->
+커맨드라인이여 영원하라!
 
-## 소개 {#소개}
+## 소개 {#introduction}
 
-이 문서는 높은 수준의 디자인 철학과 구체적인 가이드를 모두 포함합니다.
-<!-- This document covers both high-level design philosophy, and concrete guidelines. -->
-실무자로써 우리의 철학이 그렇게 까지 철학적이지 않기 때문에 가이드에 더 가깝습니다.
-<!-- It’s heavier on the guidelines because our philosophy as practitioners is not to philosophize too much. -->
-우리는 예제를 통해서 배우는 것을 믿고 때문에 우리는 많은 에제들을 제공했습니다.
-<!-- We believe in learning by example, so we’ve provided plenty of those. -->
+이 문서는 고수준의 설계 철학과 구체적인 가이드라인을 모두 다룹니다.
+우리의 실무자로서의 철학은 너무 많은 철학을 논하지 않는 것이기 때문에, 가이드라인에 더 중점을 두고 있습니다.
+우리는 예시를 통한 학습을 믿기 때문에, 많은 예시를 제공했습니다.
 
-이 가이드는 vim과 emacs같은 전체화면 터미널 프로그램을 포함하지 않습니다.
-<!-- This guide doesn’t cover full-screen terminal programs like emacs and vim. -->
-전체화면 프로그램은 틈새 프로젝트입니다. 우리 중 극소수만이 이를 설계할 수 있습니다.
-<!-- Full-screen programs are niche projects—very few of us will ever be in the position to design one. -->
+이 가이드는 emacs나 vim과 같은 전체 화면 터미널 프로그램은 다루지 않습니다.
+전체 화면 프로그램은 틈새 프로젝트입니다. 우리 중 극소수만이 이를 설계할 기회를 갖게 될 것입니다.
 
-이 가이드는 또한 프로그래밍 언어와 일반적인 도구들에 대해 구애받지 않습니다.
-<!-- This guide is also agnostic about programming languages and tooling in general. -->
+이 가이드는 또한 프로그래밍 언어와 도구에 대해 일반적으로 중립적입니다.
 
 이 가이드는 누구를 위한 것인가요?
-<!-- Who is this guide for? -->
-- 만약 당신이 CLI 프로그램을 만들고 있고 당신이 UI 디자인을 위한 원칙과 구체적인 베스트 프랙티스를 찾고 있다면, 이 가이드는 당신을 위한 것입니다.
-<!-- - If you are creating a CLI program and you are looking for principles and concrete best practices for its UI design, this guide is for you. -->
-- 만약 당신이 “전문적인 CLI UI 디자이너”라면 그건 정말 놀랍습니다. 우리가 당신에게 배우고 싶네요.
-<!-- - If you are a professional “CLI UI designer,” that’s amazing—we’d love to learn from you. -->
-- 만약 당신이 40년간의 CLI 디자인 규칙에 어긋나는 실수를 피하고 싶다면, 이 가이드는 당신을 위한 것입니다.
-<!-- - If you’d like to avoid obvious missteps of the variety that go against 40 years of CLI design conventions, this guide is for you. -->
-- 만약 당신이 만드는 프로그램의 좋은 디자인과 유용한 도움말로 사람들을 기쁘게 해주고 싶다면, 이 가이드는 확실히 당신을 위한 것입니다.
-<!-- - If you want to delight people with your program’s good design and helpful help, this guide is definitely for you. -->
-- 만약 당신이 GUI 프로그램을 만들고 있다면, 이 가이드는 당신을 위한 것이 아닙니다. 어쨋든 당신이 읽기로 결정했다면 GUI의 안티패턴들을 배울 수도 있습니다.
-<!-- - If you are creating a GUI program, this guide is not for you—though you may learn some GUI anti-patterns if you decide to read it anyway. -->
-- 만약 당신이 마인크래프트의 풀스크린 CLI 포팅 버전을 설계하고 있다면, 이 가이드는 당신을 위한 것이 아닙니다. (하지만 우리는 그것을 빨리 보고 싶습니다!)
-<!-- - If you are designing an immersive, full-screen CLI port of Minecraft, this guide isn’t for you.
-  (But we can’t wait to see it!) -->
+- CLI 프로그램을 만들고 있고 UI 설계를 위한 원칙과 구체적인 모범 사례를 찾고 있다면, 이 가이드는 당신을 위한 것입니다.
+- 당신이 전문 "CLI UI 디자이너"라면, 그건 놀랍습니다—우리는 당신에게서 배우고 싶습니다.
+- 40년간의 CLI 설계 관습에 위배되는 다양한 명백한 실수를 피하고 싶다면, 이 가이드는 당신을 위한 것입니다.
+- 당신의 프로그램의 좋은 설계와 도움이 되는 도움말로 사람들을 기쁘게 하고 싶다면, 이 가이드는 확실히 당신을 위한 것입니다.
+- GUI 프로그램을 만들고 있다면, 이 가이드는 당신을 위한 것이 아닙니다. 하지만 읽기로 결정한다면 몇 가지 GUI 안티패턴을 배울 수 있을 것입니다.
+- 만약 당신이 전체 화면 CLI 버전의 마인크래프트를 개발하고 계신다면, 이 가이드는 필요하지 않습니다.
+  (하지만 정말 보고 싶네요!)
 
-## 철학 {#철학}
+## 철학 {#philosophy}
 
-이것들은 우리가 좋은 CLI 디자인의 기본 원칙이라고 생각하는 것입니다.
-<!-- These are what we consider to be the fundamental principles of good CLI design. -->
+다음은 우리가 생각하는 좋은 CLI 설계의 기본 원칙들입니다.
 
-### 사람 우선 디자인 {#사람-우선-디자인}
+### Human-first design {#human-first-design}
 
-전통적으로 UNIX 커맨드들은 주로 다른 프로그램들에 의해 사용된다는 가정하에 작성되었습니다.
-<!-- Traditionally, UNIX commands were written under the assumption they were going to be used primarily by other programs. -->
-그것들은 그래픽 어플리케이션들에 비해 프로그래밍 언어의 함수와 더 많은 공통점이 있습니다.
-<!-- They had more in common with functions in a programming language than with graphical applications. -->
+전통적으로 UNIX 명령어들은 주로 다른 프로그램에 의해 사용될 것이라는 가정하에 작성되었습니다. 
+이들은 그래픽 애플리케이션보다는 프로그래밍 언어의 함수와 더 많은 공통점을 가지고 있었습니다.
 
-오늘날에 많은 CLI 프로그램들이 주로 (혹은 독점적으로) 사람들에 의해서 사용됨에도 불구하고, 많은 인터랙션 디자인들이 여전히 과거의 짐을 갖고 다닙니다.
-<!-- Today, even though many CLI programs are used primarily (or even exclusively) by humans, a lot of their interaction design still carries the baggage of the past. -->
-이 짐들을 버릴 시점입니다. 만약에 커맨드에 주로 사람들에 의해 사용될 것이라면 그건 사람을 우선해서 디자인되어야 합니다.
-<!-- It’s time to shed some of this baggage: if a command is going to be used primarily by humans, it should be designed for humans first. -->
+오늘날에는 많은 CLI 프로그램들이 주로(또는 전적으로) 사람들에 의해 사용됨에도 불구하고, 그들의 상호작용 설계는 여전히 과거의 짐을 지고 있습니다.
+이제 이러한 짐을 벗어던질 때입니다: 명령어가 주로 사람들에 의해 사용될 것이라면, 사람을 우선으로 설계되어야 합니다.
 
-### 함께 동작하는 작은 부품들 {#함께-동작하는-작은-부품들}
+### Simple parts that work&nbsp;together {#simple-parts-that-work-together}
 
-원래 유닉스 철학의 핵심은 큰 시스템을 만들기 위해 깔끔한 인터페이스의 작고 간단한 프로그램들이 조합할 수 있다는 아이디어입니다.
-<!-- A core tenet of [the original UNIX philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) is the idea that small, simple programs with clean interfaces can be combined to build larger systems. -->
-이러한 프로그램에 점점 더 많은 기능을 넣는 대신 필요에 따라 다시 결합할 수 있을 만큼 충분히 모듈화된 프로그램을 만듭니다.
-<!-- Rather than stuff more and more features into those programs, you make programs that are modular enough to be recombined as needed. -->
+[원래의 UNIX 철학](https://en.wikipedia.org/wiki/Unix_philosophy)의 핵심 원칙은 깔끔한 인터페이스를 가진 작고 단순한 프로그램들을 조합하여 더 큰 시스템을 구축할 수 있다는 아이디어입니다.
+프로그램에 더 많은 기능을 욱여넣는 대신, 필요에 따라 재조합할 수 있을 만큼 모듈화된 프로그램을 만듭니다.
 
-옛날에는 파이프와 쉘 스크립트는 중대한 프로그램들을 같이 엮는 과정에 중대한 역할을 했었습니다.
-<!-- In the old days, pipes and shell scripts played a crucial role in the process of composing programs together. -->
-그것들의 역할은 다용도 인터프리터 언어들의 흥행으로 감소해 갔지만 완전히 사라지지는 않았습니다.
-<!-- Their role might have diminished with the rise of general-purpose interpreted languages, but they certainly haven’t gone away. -->
-또한 CI/CD, 오케스트레이션 그리고 설정관리 등의 형태로 큰 크기의 자동화들이 번성해왔습니다.
-<!-- What’s more, large-scale automation—in the form of CI/CD, orchestration and configuration management—has flourished. -->
-프로그램을 조합 가능하게 만드는 것은 그 어느 때보다 중요합니다.
-<!-- Making programs composable is just as important as ever. -->
+예전에는 파이프와 셸 스크립트가 프로그램들을 함께 구성하는 과정에서 중요한 역할을 했습니다.
+범용 인터프리터 언어의 부상으로 그들의 역할이 줄어들었을 수 있지만, 확실히 사라지지는 않았습니다.
+더욱이 CI/CD, 오케스트레이션, 구성 관리 형태의 대규모 자동화가 번성했습니다.
+프로그램을 조합 가능하게 만드는 것은 여전히 중요합니다.
 
-운이 좋게도, 오랫동안 확립된 유닉스 환경의 컨벤션은 이 목적을 위해 디자인 되었고 오늘날에도 우리를 도와주고 있습니다.
-<!-- Fortunately, the long-established conventions of the UNIX environment, designed for this exact purpose, still help us today. -->
-표준 입력, 표준 출력, 표준 에러, 시그널, 종료 코드 및 다른 메커니즘들은 다른 프로그램들이 함께 잘 클릭되도록 합니다.
-<!-- Standard in/out/err, signals, exit codes and other mechanisms ensure that different programs click together nicely. -->
-평문, 줄 기반의 텍스트는 두 커맨드간에 파이프로 넘기기에 좋습니다.
-<!-- Plain, line-based text is easy to pipe between commands. -->
-JSON은 더 최근의 생겨났고, 필요할 때 더 많은 구조를 제공하고, 명령어 도구와 웹을 쉽게 통합할 수 있게 해줍니다.
-<!-- JSON, a much more recent invention, affords us more structure when we need it, and lets us more easily integrate command-line tools with the web. -->
+다행히도, 이러한 목적을 위해 설계된 UNIX 환경의 오랜 관례들은 오늘날에도 여전히 우리에게 도움이 됩니다.
+표준 입력/출력/오류, 시그널, 종료 코드 및 기타 메커니즘은 서로 다른 프로그램들이 잘 맞물려 돌아가도록 보장합니다.
+단순한 라인 기반 텍스트는 명령어들 사이에서 쉽게 파이프로 연결할 수 있습니다.
+훨씬 최근에 발명된 JSON은 우리가 필요로 할 때 더 많은 구조를 제공하며, 커맨드라인 도구를 웹과 더 쉽게 통합할 수 있게 해줍니다.
 
-어떤 소프트웨어를 만들던, 사람들이 예상하지 않은 방법으로 사용할 것임을 절대적으로 확신할 수 있습니다.
-<!-- Whatever software you’re building, you can be absolutely certain that people will use it in ways you didn’t anticipate. -->
-여려분의 소프트웨어가 큰 프로그램의 일부가 _될 것이고_, 당신의 유일한 선택은 그것이 제대로 작동하는 부분이 될 것인지에 달려 있습니다.
-<!-- Your software _will_ become a part in a larger system—your only choice is over whether it will be a well-behaved part. -->
+어떤 소프트웨어를 만들든, 사람들이 당신이 예상하지 못한 방식으로 사용할 것이라는 점은 확실합니다.
+당신의 소프트웨어는 더 큰 시스템의 일부가 _될 것_입니다—당신이 선택할 수 있는 것은 그것이 잘 작동하는 부품이 될 것인지 아닌지 뿐입니다.
 
-가장 중요한 것은 조합성을 디자인 하는 것은 사람 우선 디자인에 상충할 필요가 없다는 것입니다.
-<!-- Most importantly, designing for composability does not need to be at odds with designing for humans first. -->
-이 문서의 많은 충고들은 그 둘을 어떻게 달성할 것인지에 대한 것들입니다.
-<!-- Much of the advice in this document is about how to achieve both. -->
+가장 중요한 것은, 조합 가능성을 위한 설계가 사람 우선 설계와 대립할 필요가 없다는 점입니다.
+이 문서의 많은 조언들은 두 가지를 모두 달성하는 방법에 관한 것입니다.
 
-### 프로그램 간의 일관성 {#프로그램-간의-일관성}
+### Consistency across programs {#consistency-across-programs}
 
-터미널의 컨벤션은 우리들의 손가락에 내장되어 있습니다.
-<!-- The terminal’s conventions are hardwired into our fingers. -->
-우리는 커맨드 라인 문법, 플래그, 환경 변수들에 대해 배우는 초기 비용을 지불해야 하지만 프로그램들이 일관성있는 한 장기적으로 효율적입니다
-<!-- We had to pay an upfront cost by learning about command line syntax, flags, environment variables and so on, but it pays off in long-term efficiency… as long as programs are consistent. -->
+터미널의 관례들은 우리 손가락에 깊이 배어 있습니다.
+우리는 커맨드라인 문법, 플래그, 환경 변수 등을 배우는 데 초기 비용을 지불해야 했지만, 프로그램들이 일관성을 유지하는 한 장기적인 효율성으로 보상받습니다.
 
-가능하다면 CLI는 이미 있는 것들의 패턴을 따라야 합니다.
-<!-- Where possible, a CLI should follow patterns that already exist. -->
-이것이 CLI를 직관적이고 추측 가능하게 만드는 것입니다. 그것이 사용자를 효율적으로 만드는 것입니다.
-<!-- That’s what makes CLIs intuitive and guessable; that’s what makes users efficient. -->
+가능한 경우, CLI는 이미 존재하는 패턴을 따라야 합니다.
+그것이 CLI를 직관적이고 예측 가능하게 만드는 것이며, 사용자들을 효율적으로 만드는 것입니다.
 
-그것은 때때로 일관성이 사용성과 충돌할 때도 있습니다.
-<!-- That being said, sometimes consistency conflicts with ease of use. -->
-예를 들어, 많은 오랫동안 자리 잡은 UNIX 커맨드들은 기본적으로 많은 정보를 출력하지 않고 커맨드 라인에 덜 익숙한 사람들에게 혼란 혹은 걱정을 유발할 수 있습니다.
-<!-- For example, many long-established UNIX commands don't output much information by default, which can cause confusion or worry for people less familiar with the command line. -->
+하지만, 때로는 일관성이 사용 편의성과 충돌할 수 있습니다.
+예를 들어, 오래된 많은 UNIX 명령어들은 기본적으로 많은 정보를 출력하지 않는데, 이는 커맨드라인에 덜 익숙한 사람들에게 혼란이나 걱정을 일으킬 수 있습니다.
 
-규칙을 따르는 것이 프로그램의 사용성을 손상시킬 때 그것을 중단할 때가 되었을 수도 있지만 그러한 결정은 신중하게 내려야 합니다.
-<!-- When following convention would compromise a program’s usability, it might be time to break with it—but such a decision should be made with care. -->
+관례를 따르는 것이 프로그램의 사용성을 저해할 때는 그것을 깨뜨릴 때일 수 있습니다—하지만 그러한 결정은 신중하게 이루어져야 합니다.
 
-### (그냥) 충분히 말하기 {#그냥-충분히-말하기}
+### Saying (just) enough {#saying-just-enough}
 
-터미널은 순수 정보들의 세게입니다.
-<!-- The terminal is a world of pure information. -->
+터미널은 순수한 정보의 세계입니다.
+정보가 인터페이스라고 주장할 수 있으며—다른 모든 인터페이스와 마찬가지로, 흔히 너무 많거나 너무 적은 경우가 있습니다.
 
-정보가 인터페이스이며, 다른 인터페이스와 마찬가지로 정보가 너무 많거나 너무 적다고 주장할 수 있습니다.
-<!-- You could make an argument that information is the interface—and that, just like with any interface, there’s often too much or too little of it. -->
+명령어가 몇 분 동안 멈춰있어서 사용자가 고장났는지 궁금해하기 시작할 때, 그 명령어는 너무 적게 말하고 있는 것입니다.
+명령어가 페이지 수십 장 분량의 디버깅 출력을 쏟아내어 진정으로 중요한 것을 잡다한 잔해의 바다에 빠뜨릴 때, 그 명령어는 너무 많이 말하고 있는 것입니다.
+결과는 동일합니다: 명확성의 부족으로 사용자를 혼란스럽고 짜증나게 만듭니다.
 
-어떤 커맨드는 몇 분이나 걸리고 유저들이 그게 고장난 것이 궁금해하기 시작할 때 너무 작게 말합니다.
-<!-- A command is saying too little when it hangs for several minutes and the user starts to wonder if it’s broken. -->
-어떤 커맨드는 디버깅 출력의 페이지와 페이지를 덤프할 때 너무 많은 말을 해서 느슨한 쓰레기의 바다에서 진정으로 중요한 것을 익사시킵니다.
-<!-- A command is saying too much when it dumps pages and pages of debugging output, drowning what’s truly important in an ocean of loose detritus. -->
-결론은 다음과 같다: 명확성의 부족은 유저에게 혼란과 짜증을 남긴다.
-<!-- The end result is the same: a lack of clarity, leaving the user confused and irritated. -->
+이러한 균형을 맞추기는 매우 어려울 수 있지만, 소프트웨어가 사용자에게 힘을 실어주고 봉사하려면 절대적으로 중요합니다.
 
-이 균형을 잘 가지는 것은 어려울 수 있지만 사용자들에게 소프트웨어를 제공하고 권한을 주기 위해서는 절대적으로 중요하다.
-<!-- It can be very difficult to get this balance right, but it’s absolutely crucial if software is to empower and serve its users. -->
+### Ease of discovery {#ease-of-discovery}
 
-### 검색 용이성 {#검색-용이성}
+기능을 발견하기 쉽게 만드는 데 있어서는 GUI가 우위를 점하고 있습니다.
+할 수 있는 모든 것이 화면에 펼쳐져 있어서, 아무것도 배우지 않고도 필요한 것을 찾을 수 있고, 심지어 가능한지도 몰랐던 것들을 발견할 수도 있습니다.
 
-When it comes to making functionality discoverable, GUIs have the upper hand.
-Everything you can do is laid out in front of you on the screen, so you can find what you need without having to learn anything, and perhaps even discover things you didn’t know were possible.
+커맨드라인 인터페이스는 이와 반대라고 가정됩니다—모든 것을 어떻게 하는지 기억해야 한다고요.
+1987년에 발표된 원래의 [Macintosh 휴먼 인터페이스 가이드라인](https://archive.org/details/applehumaninterf00appl)은 마치 둘 중 하나만 선택할 수 있는 것처럼 "기억하고 입력하는 대신 보고 가리키기"를 권장합니다.
 
-It is assumed that command-line interfaces are the opposite of this—that you have to remember how to do everything.
-The original [Macintosh Human Interface Guidelines](https://archive.org/details/applehumaninterf00appl), published in 1987, recommend “See-and-point (instead of remember-and-type),” as if you could only choose one or the other.
+이러한 것들이 서로 배타적일 필요는 없습니다.
+커맨드라인 사용의 효율성은 명령어를 기억하는 데서 오지만, 명령어가 학습과 기억을 도와줄 수 없을 이유는 없습니다.
 
-These things needn’t be mutually exclusive.
-The efficiency of using the command-line comes from remembering commands, but there’s no reason the commands can’t help you learn and remember.
+발견하기 쉬운 CLI는 포괄적인 도움말 텍스트를 가지고 있고, 많은 예시를 제공하며, 다음에 실행할 명령어를 제안하고, 오류가 있을 때 무엇을 해야 할지 제안합니다.
+파워 유저들을 위해서도 CLI를 배우고 사용하기 쉽게 만들기 위해 GUI에서 가져올 수 있는 아이디어가 많이 있습니다.
 
-Discoverable CLIs have comprehensive help texts, provide lots of examples, suggest what command to run next, suggest what to do when there is an error.
-There are lots of ideas that can be stolen from GUIs to make CLIs easier to learn and use, even for power users.
-
-_Citation: The Design of Everyday Things (Don Norman), Macintosh Human Interface Guidelines_
+_인용: 일상적인 것들의 디자인(Don Norman), Macintosh 휴먼 인터페이스 가이드라인_
 
 ### Conversation as the&nbsp;norm {#conversation-as-the-norm}
 
-GUI design, particularly in its early days, made heavy use of _metaphor_: desktops, files, folders, recycle bins.
-It made a lot of sense, because computers were still trying to bootstrap themselves into legitimacy.
-The ease of implementation of metaphors was one of the huge advantages GUIs wielded over CLIs.
-Ironically, though, the CLI has embodied an accidental metaphor all along: it’s a conversation.
+GUI 디자인은, 특히 초기에는 _은유_를 많이 사용했습니다: 데스크톱, 파일, 폴더, 휴지통 등이요.
+컴퓨터가 여전히 정당성을 확립하려고 노력하고 있었기 때문에 이는 매우 합리적이었습니다.
+은유의 쉬운 구현은 GUI가 CLI에 비해 가진 큰 장점 중 하나였습니다.
+하지만 아이러니하게도, CLI는 줄곧 우연한 은유를 구현해왔습니다: 바로 대화입니다.
 
-Beyond the most utterly simple commands, running a program usually involves more than one invocation.
-Usually, this is because it’s hard to get it right the first time: the user types a command, gets an error, changes the command, gets a different error, and so on, until it works.
-This mode of learning through repeated failure is like a conversation the user is having with the program.
+가장 단순한 명령어를 넘어서면, 프로그램을 실행하는 것은 보통 한 번 이상의 호출을 포함합니다.
+보통 이는 처음에 바로 제대로 하기가 어렵기 때문입니다: 사용자는 명령어를 입력하고, 오류를 받고, 명령어를 변경하고, 다른 오류를 받는 등의 과정을 거쳐 마침내 작동하게 됩니다.
+반복된 실패를 통한 이러한 학습 방식은 사용자가 프로그램과 나누는 대화와 같습니다.
 
-Trial-and-error isn’t the only type of conversational interaction, though.
-There are others:
+시행착오가 대화형 상호작용의 유일한 유형은 아닙니다.
+다른 유형들도 있습니다:
 
-- Running one command to set up a tool and then learning what commands to run to actually start using it.
-- Running several commands to set up an operation, and then a final command to run it (e.g. multiple `git add`s, followed by a `git commit`).
-- Exploring a system—for example, doing a lot of `cd` and `ls` to get a sense of a directory structure, or `git log` and `git show` to explore the history of a file.
-- Doing a dry-run of a complex operation before running it for real.
+- 도구를 설정하기 위해 하나의 명령어를 실행한 다음, 실제로 사용하기 위해 실행해야 할 명령어들을 배우는 방식.
+- 작업을 설정하기 위해 여러 명령어를 실행하고, 마지막으로 실행 명령어를 입력하는 방식(예: 여러 번의 `git add` 후 `git commit` 실행).
+- 시스템을 탐색하는 방식—예를 들어, 디렉토리 구조를 파악하기 위해 `cd`와 `ls`를 많이 사용하거나, 파일의 이력을 탐색하기 위해 `git log`와 `git show`를 사용하는 방식.
+- 복잡한 작업을 실제로 실행하기 전에 시험 실행을 해보는 방식.
 
-Acknowledging the conversational nature of command-line interaction means you can bring relevant techniques to bear on its design.
-You can suggest possible corrections when user input is invalid, you can make the intermediate state clear when the user is going through a multi-step process, you can confirm for them that everything looks good before they do something scary.
+명령줄 상호작용의 대화적 특성을 인정한다는 것은 이러한 특성에 맞는 관련 기술들을 설계에 적용할 수 있다는 것을 의미합니다.
+사용자의 입력이 유효하지 않을 때 가능한 수정 사항을 제안할 수 있고, 사용자가 다단계 프로세스를 진행할 때 중간 상태를 명확하게 보여줄 수 있으며, 위험한 작업을 수행하기 전에 모든 것이 정상인지 확인해줄 수 있습니다.
 
-The user is conversing with your software, whether you intended it or not.
-At worst, it’s a hostile conversation which makes them feel stupid and resentful.
-At best, it’s a pleasant exchange that speeds them on their way with newfound knowledge and a feeling of achievement.
+의도했든 그렇지 않든 사용자는 당신의 소프트웨어와 대화하고 있습니다.
+최악의 경우, 사용자를 바보처럼 느끼게 하고 분노하게 만드는 적대적인 대화가 될 수 있습니다.
+최선의 경우, 새로운 지식과 성취감을 가지고 빠르게 목표를 달성하게 하는 즐거운 교류가 될 수 있습니다.
 
-_Further reading: [The Anti-Mac User Interface (Don Gentner and Jakob Nielsen)](https://www.nngroup.com/articles/anti-mac-interface/)_
+_추가 읽을거리: [The Anti-Mac User Interface (Don Gentner and Jakob Nielsen)](https://www.nngroup.com/articles/anti-mac-interface/)_
 
-### Robustness {#robustness-principle}
+### 견고성 {#robustness-principle}
 
-Robustness is both an objective and a subjective property.
-Software should _be_ robust, of course: unexpected input should be handled gracefully, operations should be idempotent where possible, and so on.
-But it should also _feel_ robust.
+견고성은 객관적이면서도 주관적인 특성입니다.
+물론 소프트웨어는 견고해야 합니다: 예상치 못한 입력을 우아하게 처리해야 하고, 가능한 경우 작업은 멱등성을 가져야 하며, 기타 등등.
+하지만 견고하다고 느껴지기도 해야 합니다.
 
-You want your software to feel like it isn’t going to fall apart.
-You want it to feel immediate and responsive, as if it were a big mechanical machine, not a flimsy plastic “soft switch.”
+당신의 소프트웨어가 부서질 것 같지 않다고 느끼게 하고 싶을 것입니다.
+당신은 그것이 허약한 플라스틱 "소프트 스위치"가 아닌, 큰 기계장치처럼 즉각적이고 반응이 좋다고 느끼게 하고 싶을 것입니다.
 
-Subjective robustness requires attention to detail and thinking hard about what can go wrong.
-It’s lots of little things: keeping the user informed about what’s happening, explaining what common errors mean, not printing scary-looking stack traces.
+주관적인 견고성을 위해서는 세부사항에 주의를 기울이고 잘못될 수 있는 것들에 대해 깊이 생각해야 합니다.
+사용자에게 진행 상황을 계속 알리고, 일반적인 오류의 의미를 설명하고, 무서워 보이는 스택 트레이스를 출력하지 않는 등 작은 것들이 많이 있습니다.
 
-As a general rule, robustness can also come from keeping it simple.
-Lots of special cases and complex code tend to make a program fragile.
+일반적으로, 견고성은 단순함을 유지하는 것에서도 올 수 있습니다.
+많은 특수 케이스와 복잡한 코드는 프로그램을 취약하게 만드는 경향이 있습니다.
 
-### Empathy {#empathy}
+### 공감 {#empathy}
 
-Command-line tools are a programmer’s creative toolkit, so they should be enjoyable to use.
-This doesn’t mean turning them into a video game, or using lots of emoji (though there’s nothing inherently wrong with emoji 😉).
-It means giving the user the feeling that you are on their side, that you want them to succeed, that you have thought carefully about their problems and how to solve them.
+명령줄 도구는 프로그래머의 창의적인 도구이므로, 사용하기 즐거워야 합니다.
+이는 비디오 게임으로 만들거나 많은 이모지를 사용한다는 의미는 아닙니다(이모지 자체가 잘못된 것은 아니지만요 😉).
+이는 사용자에게 당신이 그들의 편이고, 그들이 성공하기를 바라며, 그들의 문제와 해결 방법에 대해 신중히 생각했다는 느낌을 주는 것을 의미합니다.
 
-There’s no list of actions you can take that will ensure they feel this way, although we hope that following our advice will take you some of the way there.
-Delighting the user means _exceeding their expectations_ at every turn, and that starts with empathy.
+우리의 조언을 따르면 어느 정도는 도움이 되겠지만, 이러한 느낌을 보장하는 행동 목록은 없습니다.
+사용자를 기쁘게 하는 것은 모든 순간에 그들의 기대를 뛰어넘는 것을 의미하며, 이는 공감에서 시작됩니다.
 
-### Chaos {#chaos}
+### 혼돈 {#chaos}
 
-The world of the terminal is a mess.
-Inconsistencies are everywhere, slowing us down and making us second-guess ourselves.
+터미널의 세계는 혼돈스럽습니다.
+일관성 없는 것들이 도처에 있어서, 우리를 늦추고 우리 자신을 의심하게 만듭니다.
 
-Yet it’s undeniable that this chaos has been a source of power.
-The terminal, like the UNIX-descended computing environment in general, places very few constraints on what you can build.
-In that space, all manner of invention has bloomed.
+하지만 이러한 혼돈이 힘의 원천이었다는 것은 부정할 수 없습니다.
+일반적으로 UNIX에서 유래한 컴퓨팅 환경처럼, 터미널은 당신이 만들 수 있는 것에 대해 매우 적은 제약만을 둡니다.
+그러한 공간에서, 모든 종류의 발명이 꽃피었습니다.
 
-It’s ironic that this document implores you to follow existing patterns, right alongside advice that contradicts decades of command-line tradition.
-We’re just as guilty of breaking the rules as anyone.
+이 문서가 수십 년간의 명령줄 전통에 위배되는 조언과 함께, 기존 패턴을 따르라고 간청하는 것은 아이러니합니다.
+우리도 다른 누구와 마찬가지로 규칙을 깨는 데 있어 죄가 있습니다.
 
-The time might come when you, too, have to break the rules.
-Do so with intention and clarity of purpose.
+당신도 규칙을 깨야 할 때가 올 수 있습니다.
+목적의 의도와 명확성을 가지고 그렇게 하세요.
 
-> “Abandon a standard when it is demonstrably harmful to productivity or user satisfaction.” — Jef Raskin, [The Humane Interface](https://en.wikipedia.org/wiki/The_Humane_Interface)
+> "생산성이나 사용자 만족도에 명백히 해롭다고 입증된 경우에는 표준을 버리세요." — Jef Raskin, [The Humane Interface](https://en.wikipedia.org/wiki/The_Humane_Interface)
 
-## Guidelines {#guidelines}
+## 가이드라인 {#guidelines}
 
-This is a collection of specific things you can do to make your command-line program better.
+이것은 당신의 명령줄 프로그램을 더 좋게 만들기 위해 할 수 있는 구체적인 것들의 모음입니다.
 
-The first section contains the essential things you need to follow.
-Get these wrong, and your program will be either hard to use or a bad CLI citizen.
+첫 번째 섹션은 따라야 할 필수적인 것들을 담고 있습니다.
+이것들을 잘못하면, 당신의 프로그램은 사용하기 어렵거나 나쁜 CLI 시민이 될 것입니다.
 
-The rest are nice-to-haves.
-If you have the time and energy to add these things, your program will be a lot better than the average program.
+나머지는 있으면 좋은 것들입니다.
+이러한 것들을 추가할 시간과 에너지가 있다면, 당신의 프로그램은 평균적인 프로그램보다 훨씬 더 좋을 것입니다.
 
-The idea is that, if you don’t want to think too hard about the design of your program, you don’t have to: just follow these rules and your program will probably be good.
-On the other hand, if you’ve thought about it and determined that a rule is wrong for your program, that’s fine.
-(There’s no central authority that will reject your program for not following arbitrary rules.)
+이 아이디어는, 만약 당신이 프로그램의 설계에 대해 너무 깊이 생각하고 싶지 않다면, 그럴 필요가 없다는 것입니다: 이 규칙들을 따르기만 하면 당신의 프로그램은 아마도 좋을 것입니다.
+반면에, 만약 당신이 생각해보고 어떤 규칙이 당신의 프로그램에 맞지 않다고 판단했다면, 그것도 괜찮습니다.
+(임의의 규칙을 따르지 않았다고 당신의 프로그램을 거부할 중앙 권한은 없습니다.)
 
-Also—these rules aren’t written in stone.
-If you disagree with a general rule for good reason, we hope you’ll [propose a change](https://github.com/cli-guidelines/cli-guidelines).
+또한—이 규칙들은 돌에 새겨진 것이 아닙니다.
+만약 당신이 타당한 이유로 일반적인 규칙에 동의하지 않는다면, [변경을 제안](https://github.com/cli-guidelines/cli-guidelines)해 주시기를 바랍니다.
 
-### The Basics {#the-basics}
+### 기본 사항 {#the-basics}
 
-There are a few basic rules you need to follow.
-Get these wrong, and your program will be either very hard to use, or flat-out broken.
+따라야 할 몇 가지 기본 규칙이 있습니다.
+이것들을 잘못하면, 당신의 프로그램은 사용하기 매우 어렵거나 완전히 망가질 것입니다.
 
-**Use a command-line argument parsing library where you can.**
-Either your language’s built-in one, or a good third-party one.
-They will normally handle arguments, flag parsing, help text, and even spelling suggestions in a sensible way.
+**가능한 경우 명령줄 인자 파싱 라이브러리를 사용하세요.**
+당신이 사용하는 언어에 내장된 것이나 좋은 서드파티 라이브러리를 사용하세요.
+이들은 보통 인자, 플래그 파싱, 도움말 텍스트, 심지어 철자 제안까지도 합리적인 방식으로 처리합니다.
 
-Here are some that we like:
-* Multi-platform: [docopt](http://docopt.org)
-* Bash: [argbash](https://argbash.io)
+다음은 우리가 좋아하는 몇 가지입니다:
+* 멀티플랫폼: [docopt](http://docopt.org)
+* Bash: [argbash](https://argbash.dev)
 * Go: [Cobra](https://github.com/spf13/cobra), [cli](https://github.com/urfave/cli)
 * Haskell: [optparse-applicative](https://hackage.haskell.org/package/optparse-applicative)
 * Java: [picocli](https://picocli.info/)
+* Julia: [ArgParse.jl](https://github.com/carlobaldassi/ArgParse.jl), [Comonicon.jl](https://github.com/comonicon/Comonicon.jl)
+* Kotlin: [clikt](https://ajalt.github.io/clikt/)
 * Node: [oclif](https://oclif.io/)
+* Deno: [parseArgs](https://jsr.io/@std/cli/doc/parse-args/~/parseArgs)
+* Perl: [Getopt::Long](https://metacpan.org/pod/Getopt::Long)
 * PHP: [console](https://github.com/symfony/console), [CLImate](https://climate.thephpleague.com)
 * Python: [Argparse](https://docs.python.org/3/library/argparse.html), [Click](https://click.palletsprojects.com/), [Typer](https://github.com/tiangolo/typer)
 * Ruby: [TTY](https://ttytoolkit.org/)
-* Rust: [clap](https://clap.rs/), [structopt](https://github.com/TeXitoi/structopt)
+* Rust: [clap](https://docs.rs/clap)
 * Swift: [swift-argument-parser](https://github.com/apple/swift-argument-parser)
 
-**Return zero exit code on success, non-zero on failure.**
-Exit codes are how scripts determine whether a program succeeded or failed, so you should report this correctly.
-Map the non-zero exit codes to the most important failure modes.
+**성공 시 종료 코드 0을, 실패 시 0이 아닌 값을 반환하세요.**
+종료 코드는 스크립트가 프로그램의 성공 또는 실패를 판단하는 방법이므로, 이를 정확하게 보고해야 합니다.
+0이 아닌 종료 코드를 가장 중요한 실패 모드에 매핑하세요.
 
-**Send output to `stdout`.**
-The primary output for your command should go to `stdout`.
-Anything that is machine readable should also go to `stdout`—this is where piping sends things by default.
+**출력을 `stdout`으로 보내세요.**
+명령어의 주요 출력은 `stdout`으로 보내져야 합니다.
+기계가 읽을 수 있는 모든 것도 `stdout`으로 보내야 합니다—이는 파이핑이 기본적으로 데이터를 보내는 곳입니다.
 
-**Send messaging to `stderr`.**
-Log messages, errors, and so on should all be sent to `stderr`.
-This means that when commands are piped together, these messages are displayed to the user and not fed into the next command.
+**메시지는 `stderr`로 보내세요.**
+로그 메시지, 오류 등은 모두 `stderr`로 보내져야 합니다.
+이는 명령어들이 파이프로 연결될 때, 이러한 메시지들이 사용자에게 표시되고 다음 명령어로 전달되지 않는다는 것을 의미합니다.
 
-### Help {#help}
+### 도움말 {#help}
 
-**Display help text when passed no options, the `-h` flag, or the `--help` flag.**
+**옵션이 없거나, `-h` 플래그 또는 `--help` 플래그가 전달될 때 도움말 텍스트를 표시하세요.**
 
-**Display a concise help text by default.**
-If you can, display help by default when `myapp` or `myapp subcommand` is run.
-Unless your program is very simple and does something obvious by default (e.g. `ls`), or your program reads input interactively (e.g. `cat`).
+**기본적으로 간단한 도움말 텍스트를 표시하세요.**
+`myapp` 또는 `myapp subcommand`가 인자 없이 실행될 때, 도움말 텍스트를 표시하세요.
 
-The concise help text should only include:
+프로그램이나 하위 명령어가 매우 간단하고 인자가 필요하지 않은 경우(예: `ls`, `git pull`),
+또는 기본적으로 대화형인 경우(예: `npm init`) 이 가이드라인을 무시할 수 있습니다.
 
-- A description of what your program does.
-- One or two example invocations.
-- Descriptions of flags, unless there are lots of them.
-- An instruction to pass the `--help` flag for more information.
+간단한 도움말 텍스트는 다음 사항만 포함해야 합니다:
 
-`jq` does this well.
-When you type `jq`, it displays an introductory description and an example, then prompts you to pass `jq --help` for the full listing of flags:
+- 프로그램이 수행하는 작업에 대한 설명
+- 하나 또는 두 개의 실행 예시
+- 플래그가 많지 않은 경우, 플래그에 대한 설명
+- 더 자세한 정보를 위해 `--help` 플래그를 전달하라는 안내
+
+`jq`는 이를 잘 수행합니다.
+`jq`를 입력하면, 소개 설명과 예시를 표시한 다음, 플래그의 전체 목록을 보려면 `jq --help`를 전달하라고 안내합니다:
 
 ```
 $ jq
@@ -407,8 +336,8 @@ Example:
 For a listing of options, use jq --help.
 ```
 
-**Show full help when `-h` and `--help` is passed.**
-All of these should show help:
+**`-h`와 `--help`가 전달될 때 전체 도움말을 표시하세요.**
+다음 모두가 도움말을 표시해야 합니다:
 
 ```
 $ myapp
@@ -416,10 +345,10 @@ $ myapp --help
 $ myapp -h
 ```
 
-Ignore any other flags and arguments that are passed—you should be able to add `-h` to the end of anything and it should show help.
-Don’t overload `-h`.
+다른 플래그와 인자는 무시하세요—어떤 명령어의 끝에도 `-h`를 추가할 수 있어야 하고 도움말이 표시되어야 합니다.
+`-h`를 중복 사용하지 마세요.
 
-If your program is `git`-like, the following should also offer help:
+만약 당신의 프로그램이 `git`과 비슷하다면, 다음도 도움말을 제공해야 합니다:
 
 ```
 $ myapp help
@@ -428,28 +357,28 @@ $ myapp subcommand --help
 $ myapp subcommand -h
 ```
 
-**Provide a support path for feedback and issues.**
-A website or GitHub link in the top-level help text is common.
+**피드백과 이슈를 위한 지원 경로를 제공하세요.**
+최상위 도움말 텍스트에 웹사이트나 GitHub 링크를 포함하는 것이 일반적입니다.
 
-**In help text, link to the web version of the documentation.**
-If you have a specific page or anchor for a subcommand, link directly to that.
-This is particularly useful if there is more detailed documentation on the web, or further reading that might explain the behavior of something.
+**도움말 텍스트에서 문서의 웹 버전에 대한 링크를 제공하세요.**
+하위 명령어에 대한 특정 페이지나 앵커가 있다면, 직접 링크하세요.
+웹에 더 자세한 문서가 있거나, 어떤 동작을 설명하는 추가 자료가 있는 경우 특히 유용합니다.
 
-**Lead with examples.**
-Users tend to use examples over other forms of documentation, so show them first in the help page, particularly the common complex uses.
-If it helps explain what it’s doing and it isn’t too long, show the actual output too.
+**예시를 먼저 보여주세요.**
+사용자들은 다른 형태의 문서보다 예시를 더 많이 사용하는 경향이 있으므로, 도움말 페이지에서 먼저 보여주세요. 특히 일반적인 복잡한 사용 사례를 보여주세요.
+무엇을 하는지 설명하는 데 도움이 되고 너무 길지 않다면, 실제 출력도 보여주세요.
 
-You can tell a story with a series of examples, building your way toward complex uses.
+일련의 예시들로 이야기를 만들어 복잡한 사용법으로 나아갈 수 있습니다.
 <!-- TK example? -->
 
-**If you’ve got loads of examples, put them somewhere else,** in a cheat sheet command or a web page.
-It’s useful to have exhaustive, advanced examples, but you don’t want to make your help text really long.
+**많은 예시가 있다면, 치트 시트 명령어나 웹 페이지와 같은 다른 곳에 넣으세요.**
+상세하고 고급 예시를 갖는 것은 유용하지만, 도움말 텍스트를 너무 길게 만들고 싶지는 않을 것입니다.
 
-For more complex use cases, e.g. when integrating with another tool, it might be appropriate to write a fully-fledged tutorial.
+다른 도구와 통합하는 경우와 같은 더 복잡한 사용 사례의 경우, 완전한 튜토리얼을 작성하는 것이 적절할 수 있습니다.
 
-**Display the most common flags and commands at the start of the help text.**
-It’s fine to have lots of flags, but if you’ve got some really common ones, display them first.
-For example, the Git command displays the commands for getting started and the most commonly used subcommands first:
+**가장 일반적인 플래그와 명령어를 도움말 텍스트 시작 부분에 표시하세요.**
+많은 플래그를 가지는 것은 괜찮지만, 정말 일반적인 것들이 있다면 그것들을 먼저 표시하세요.
+예를 들어, Git 명령어는 시작하기 위한 명령어와 가장 자주 사용되는 하위 명령어를 먼저 표시합니다:
 
 ```
 $ git
@@ -480,9 +409,9 @@ examine the history and state (see also: git help revisions)
 …
 ```
 
-**Use formatting in your help text.**
-Bold headings make it much easier to scan.
-But, try to do it in a terminal-independent way so that your users aren't staring down a wall of escape characters.
+**도움말 텍스트에 서식을 사용하세요.**
+볼드체 제목은 훨씬 더 쉽게 읽을 수 있게 해줍니다.
+하지만, 사용자들이 이스케이프 문자의 벽을 마주하지 않도록 터미널에 독립적인 방식으로 시도하세요.
 
 <pre>
 <code>
@@ -525,13 +454,13 @@ list your apps
 </code>
 </pre>
 
-Note: When `heroku apps --help` is piped through a pager, the command emits no escape characters.
+참고: `heroku apps --help`가 페이저를 통해 파이프될 때, 명령어는 이스케이프 문자를 출력하지 않습니다.
 
-**If the user did something wrong and you can guess what they meant, suggest it.**
-For example, `brew update jq` tells you that you should run `brew upgrade jq`.
+**사용자가 잘못된 작업을 했고 무엇을 의도했는지 추측할 수 있다면, 제안하세요.**
+예를 들어, `brew update jq`는 `brew upgrade jq`를 실행해야 한다고 알려줍니다.
 
-You can ask if they want to run the suggested command, but don’t force it on them.
-For example:
+제안된 명령어를 실행할지 물어볼 수 있지만, 강요하지는 마세요.
+예를 들어:
 
 ```
 $ heroku pss
@@ -539,41 +468,41 @@ $ heroku pss
 Did you mean ps? [y/n]:
 ```
 
-Rather than suggesting the corrected syntax, you might be tempted to just run it for them, as if they’d typed it right in the first place.
-Sometimes this is the right thing to do, but not always.
+수정된 구문을 제안하는 대신, 처음부터 올바르게 입력한 것처럼 그냥 실행하고 싶을 수 있습니다.
+때로는 이것이 올바른 방법일 수 있지만, 항상 그런 것은 아닙니다.
 
-Firstly, invalid input doesn’t necessarily imply a simple typo—it can often mean the user has made a logical mistake, or misused a shell variable.
-Assuming what they meant can be dangerous, especially if the resulting action modifies state.
+첫째, 유효하지 않은 입력이 반드시 단순한 오타를 의미하는 것은 아닙니다. 사용자가 논리적 실수를 했거나 셸 변수를 잘못 사용했을 수 있습니다.
+특히 결과 작업이 상태를 수정하는 경우, 그들이 의도한 바를 추측하는 것은 위험할 수 있습니다.
 
-Secondly, be aware that if you change what the user typed, they won’t learn the correct syntax.
-In effect, you’re ruling that the way they typed it is valid and correct, and you’re committing to supporting that indefinitely.
-Be intentional in making that decision, and document both syntaxes.
+둘째, 사용자가 입력한 내용을 변경하면 올바른 구문을 배울 수 없다는 점을 알아야 합니다.
+사실상 그들이 입력한 방식이 유효하고 올바르다고 판단하는 것이며, 그것을 무기한으로 지원하기로 약속하는 것입니다.
+그러한 결정을 의도적으로 내리고, 두 구문을 모두 문서화하세요.
 
-_Further reading: [“Do What I Mean”](http://www.catb.org/~esr/jargon/html/D/DWIM.html)_
+_추가 읽을거리: ["Do What I Mean"](http://www.catb.org/~esr/jargon/html/D/DWIM.html)_
 
-**If your command is expecting to have something piped to it and `stdin` is an interactive terminal, display help immediately and quit.**
-This means it doesn’t just hang, like `cat`.
-Alternatively, you could print a log message to `stderr`.
+**명령이 파이프로 전달되는 내용을 기대하고 있고 `stdin`이 대화형 터미널인 경우, 즉시 도움말을 표시하고 종료하세요.**
+이는 `cat`처럼 그냥 멈춰있지 않는다는 의미입니다.
+대안으로, `stderr`에 로그 메시지를 출력할 수 있습니다.
 
-### Documentation {#documentation}
+### 문서화 {#documentation}
 
-The purpose of [help text](#help) is to give a brief, immediate sense of what your tool is, what options are available, and how to perform the most common tasks.
-Documentation, on the other hand, is where you go into full detail.
-It’s where people go to understand what your tool is for, what it _isn’t_ for, how it works and how to do everything they might need to do.
+[도움말 텍스트](#help)의 목적은 도구가 무엇인지, 어떤 옵션이 있는지, 그리고 가장 일반적인 작업을 수행하는 방법에 대한 간단하고 즉각적인 감각을 제공하는 것입니다.
+반면에 문서화는 모든 세부 사항을 자세히 다루는 곳입니다.
+사람들이 도구의 용도가 무엇이고, 무엇을 위한 것이 _아닌지_, 어떻게 작동하는지, 그리고 필요한 모든 작업을 수행하는 방법을 이해하기 위해 찾는 곳입니다.
 
-**Provide web-based documentation.**
-People need to be able to search online for your tool’s documentation, and to link other people to specific parts.
-The web is the most inclusive documentation format available.
+**웹 기반 문서를 제공하세요.**
+사람들이 온라인에서 도구의 문서를 검색하고 다른 사람들에게 특정 부분을 링크할 수 있어야 합니다.
+웹은 가장 포괄적인 문서 형식입니다.
 
-**Provide terminal-based documentation.**
-Documentation in the terminal has several nice properties: it’s fast to access, it stays in sync with the specific installed version of the tool, and it works without an internet connection.
+**터미널 기반 문서를 제공하세요.**
+터미널의 문서는 여러 가지 좋은 특성이 있습니다: 접근이 빠르고, 설치된 도구의 특정 버전과 동기화되어 있으며, 인터넷 연결 없이도 작동합니다.
 
-**Consider providing man pages.**
-[man pages](https://en.wikipedia.org/wiki/Man_page), Unix’s original system of documentation, are still in use today, and many users will reflexively check `man mycmd` as a first step when trying to learn about your tool.
-To make them easier to generate, you can use a tool like [ronn](http://rtomayko.github.io/ronn/ronn.1.html) (which can also generate your web docs).
+**man 페이지 제공을 고려하세요.**
+Unix의 원래 문서 시스템인 [man 페이지](https://en.wikipedia.org/wiki/Man_page)는 오늘날에도 여전히 사용되고 있으며, 많은 사용자들이 도구에 대해 배우려고 할 때 첫 단계로 반사적으로 `man mycmd`를 확인합니다.
+생성을 더 쉽게 하기 위해 [ronn](http://rtomayko.github.io/ronn/ronn.1.html)과 같은 도구를 사용할 수 있습니다(웹 문서도 생성할 수 있습니다).
 
-However, not everyone knows about `man`, and it doesn’t run on all platforms, so you should also make sure your terminal docs are accessible via your tool itself.
-For example, `git` and `npm` make their man pages accessible via the `help` subcommand, so `npm help ls` is equivalent to `man npm-ls`.
+하지만 모든 사람이 `man`을 알고 있는 것은 아니며 모든 플랫폼에서 실행되지는 않으므로, 터미널 문서가 도구 자체를 통해서도 접근 가능하도록 해야 합니다.
+예를 들어, `git`과 `npm`은 `help` 하위 명령을 통해 man 페이지에 접근할 수 있게 하므로, `npm help ls`는 `man npm-ls`와 동일합니다.
 
 ```
 NPM-LS(1)                                                            NPM-LS(1)
@@ -593,51 +522,51 @@ DESCRIPTION
        ...
 ```
 
-### Output {#output}
+### 출력 {#output}
 
-**Human-readable output is paramount.**
-Humans come first, machines second.
-The most simple and straightforward heuristic for whether a particular output stream (`stdout` or `stderr`) is being read by a human is _whether or not it’s a TTY_.
-Whatever language you’re using, it will have a utility or library for doing this (e.g. [Python](https://stackoverflow.com/questions/858623/how-to-recognize-whether-a-script-is-running-on-a-tty), [Node](https://nodejs.org/api/process.html#process_a_note_on_process_i_o), [Go](https://github.com/mattn/go-isatty)).
+**사람이 읽을 수 있는 출력이 가장 중요합니다.**
+사람이 첫 번째, 기계가 두 번째입니다.
+특정 출력 스트림(`stdout` 또는 `stderr`)이 사람에 의해 읽히고 있는지에 대한 가장 간단하고 직접적인 휴리스틱은 _TTY인지 아닌지_입니다.
+어떤 언어를 사용하든, 이를 수행하기 위한 유틸리티나 라이브러리가 있을 것입니다(예: [Python](https://stackoverflow.com/questions/858623/how-to-recognize-whether-a-script-is-running-on-a-tty), [Node](https://nodejs.org/api/process.html#process_a_note_on_process_i_o), [Go](https://github.com/mattn/go-isatty)).
 
-_Further reading on [what a TTY is](https://unix.stackexchange.com/a/4132)._
+_[TTY가 무엇인지](https://unix.stackexchange.com/a/4132)에 대한 추가 읽을거리._
 
-**Have machine-readable output where it does not impact usability.**
-Streams of text is the universal interface in UNIX.
-Programs typically output lines of text, and programs typically expect lines of text as input,
-therefore you can compose multiple programs together.
-This is normally done to make it possible to write scripts,
-but it can also help the usability for humans using programs.
-For example, a user should be able to pipe output to `grep` and it should do what they expect.
+**사용성에 영향을 주지 않는 경우 기계가 읽을 수 있는 출력을 제공하세요.**
+텍스트 스트림은 UNIX의 보편적인 인터페이스입니다.
+프로그램은 일반적으로 텍스트 라인을 출력하고, 일반적으로 텍스트 라인을 입력으로 기대합니다.
+따라서 여러 프로그램을 함께 조합할 수 있습니다.
+이는 일반적으로 스크립트를 작성할 수 있게 하기 위한 것이지만,
+프로그램을 사용하는 사람들의 사용성에도 도움이 될 수 있습니다.
+예를 들어, 사용자는 출력을 `grep`에 파이프로 연결할 수 있어야 하며 예상대로 작동해야 합니다.
 
-> “Expect the output of every program to become the input to another, as yet unknown, program.”
+> "모든 프로그램의 출력은 아직 알려지지 않은 다른 프로그램의 입력이 될 것이라고 예상하세요."
 — [Doug McIlroy](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html)
 
-**If human-readable output breaks machine-readable output, use `--plain` to display output in plain, tabular text format for integration with tools like `grep` or `awk`.**
-In some cases, you might need to output information in a different way to make it human-readable.
+**사람이 읽을 수 있는 출력이 기계가 읽을 수 있는 출력을 깨뜨리는 경우, `--plain`을 사용하여 `grep`이나 `awk`와 같은 도구와의 통합을 위해 일반 표 형식의 텍스트로 출력을 표시하세요.**
+경우에 따라 사람이 읽을 수 있도록 하기 위해 정보를 다른 방식으로 출력해야 할 수 있습니다.
 <!-- (TK example with and without --plain) -->
-For example, if you are displaying a line-based table, you might choose to split a cell into multiple lines, fitting in more information while keeping it within the width of the screen.
-This breaks the expected behavior of there being one piece of data per line, so you should provide a `--plain` flag for scripts, which disables all such manipulation and outputs one record per line.
+예를 들어, 라인 기반 테이블을 표시하는 경우 셀을 여러 줄로 나누어 화면 너비 내에서 더 많은 정보를 맞출 수 있습니다.
+이는 한 줄에 하나의 데이터가 있어야 한다는 예상된 동작을 깨뜨리므로, 스크립트를 위해 `--plain` 플래그를 제공하여 모든 그러한 조작을 비활성화하고 한 줄에 하나의 레코드를 출력해야 합니다.
 
-**Display output as formatted JSON if `--json` is passed.**
-JSON allows for more structure than plain text, so it makes it much easier to output and handle complex data structures.
-[`jq`](https://stedolan.github.io/jq/) is a common tool for working with JSON on the command-line, and there is now a [whole ecosystem of tools](https://ilya-sher.org/2018/04/10/list-of-json-tools-for-command-line/) that output and manipulate JSON.
+**`--json`이 전달되면 출력을 형식이 지정된 JSON으로 표시하세요.**
+JSON은 일반 텍스트보다 더 많은 구조를 허용하므로 복잡한 데이터 구조를 출력하고 처리하기가 훨씬 쉽습니다.
+[`jq`](https://stedolan.github.io/jq/)는 명령줄에서 JSON을 다루기 위한 일반적인 도구이며, 이제는 [JSON을 다루는 도구들의 전체 생태계](https://ilya-sher.org/2018/04/10/list-of-json-tools-for-command-line/)가 있습니다.
 
-It is also widely used on the web, so by using JSON as the input and output of programs, you can pipe directly to and from web services using `curl`.
+또한 웹에서도 널리 사용되므로, JSON을 프로그램의 입력과 출력으로 사용하면 `curl`을 사용하여 웹 서비스와 직접 파이프로 연결할 수 있습니다.
 
-**Display output on success, but keep it brief.**
-Traditionally, when nothing is wrong, UNIX commands display no output to the user.
-This makes sense when they’re being used in scripts, but can make commands appear to be hanging or broken when used by humans.
-For example, `cp` will not print anything, even if it takes a long time.
+**성공 시 출력을 표시하되, 간단하게 유지하세요.**
+전통적으로 문제가 없을 때 UNIX 명령은 사용자에게 아무 출력도 표시하지 않습니다.
+스크립트에서 사용될 때는 이해가 되지만, 사람이 사용할 때는 명령이 멈추거나 고장난 것처럼 보일 수 있습니다.
+예를 들어, `cp`는 시간이 오래 걸리더라도 아무것도 출력하지 않습니다.
 
-It’s rare that printing nothing at all is the best default behavior, but it’s usually best to err on the side of less.
+아무것도 출력하지 않는 것이 가장 좋은 기본 동작인 경우는 드물지만, 일반적으로 더 적게 출력하는 쪽이 좋습니다.
 
-For instances where you do want no output (for example, when used in shell scripts), to avoid clumsy redirection of `stderr` to `/dev/null`, you can provide a `-q` option to suppress all non-essential output.
+출력을 원하지 않는 경우(예: 셸 스크립트에서 사용할 때), `stderr`를 `/dev/null`로 리디렉션하는 불편함을 피하기 위해 `-q` 옵션을 제공하여 모든 비필수 출력을 억제할 수 있습니다.
 
-**If you change state, tell the user.**
-When a command changes the state of a system, it’s especially valuable to explain what has just happened, so the user can model the state of the system in their head—particularly if the result doesn’t directly map to what the user requested.
+**상태를 변경하는 경우 사용자에게 알리세요.**
+명령이 시스템의 상태를 변경할 때, 방금 일어난 일을 설명하는 것이 특히 중요합니다. 이를 통해 사용자가 머릿속으로 시스템의 상태를 모델링할 수 있습니다—특히 결과가 사용자가 요청한 것과 직접적으로 일치하지 않는 경우에 더욱 그렇습니다.
 
-For example, `git push` tells you exactly what it is doing, and what the new state of the remote branch is:
+예를 들어, `git push`는 정확히 무엇을 하고 있는지, 그리고 원격 브랜치의 새로운 상태가 어떤지 알려줍니다:
 
 ```
 $ git push
@@ -652,10 +581,10 @@ To github.com:replicate/replicate.git
  + 6c22c90...a2a5217 bfirsh/fix-delete -> bfirsh/fix-delete
 ```
 
-**Make it easy to see the current state of the system.**
-If your program does a lot of complex state changes and it is not immediately visible in the filesystem, make sure you make this easy to view.
+**시스템의 현재 상태를 쉽게 볼 수 있게 만드세요.**
+프로그램이 많은 복잡한 상태 변경을 수행하고 파일시스템에서 즉시 볼 수 없는 경우, 이를 쉽게 볼 수 있도록 하세요.
 
-For example, `git status` tells you as much information as possible about the current state of your Git repository, and some hints at how to modify the state:
+예를 들어, `git status`는 Git 저장소의 현재 상태에 대해 가능한 한 많은 정보를 알려주고, 상태를 수정하는 방법에 대한 힌트를 제공합니다:
 
 ```
 $ git status
@@ -670,20 +599,20 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-**Suggest commands the user should run.**
-When several commands form a workflow, suggesting to the user commands they can run next helps them learn how to use your program and discover new functionality.
-For example, in the `git status` output above, it suggests commands you can run to modify the state you are viewing.
+**사용자가 실행해야 할 명령을 제안하세요.**
+여러 명령이 워크플로우를 형성할 때, 사용자에게 다음에 실행할 수 있는 명령을 제안하면 프로그램 사용 방법을 배우고 새로운 기능을 발견하는 데 도움이 됩니다.
+예를 들어, 위의 `git status` 출력에서는 사용자가 보고 있는 상태를 수정하기 위해 실행할 수 있는 명령어를 제시합니다.
 
-**Actions crossing the boundary of the program’s internal world should usually be explicit.**
-This includes things like:
+**프로그램의 내부 세계의 경계를 넘어서는 작업은 일반적으로 명시적이어야 합니다.**
+여기에는 다음과 같은 것들이 포함됩니다:
 
-- Reading or writing files that the user didn’t explicitly pass as arguments (unless those files are storing internal program state, such as a cache).
-- Talking to a remote server, e.g. to download a file.
+- 사용자가 명시적으로 인자로 전달하지 않은 파일을 읽거나 쓰는 경우(해당 파일이 캐시와 같은 내부 프로그램 상태를 저장하는 것이 아닌 한).
+- 원격 서버와 통신하는 경우, 예를 들어 파일을 다운로드하기 위해.
 
-**Increase information density—with ASCII art!**
-For example, `ls` shows permissions in a scannable way.
-When you first see it, you can ignore most of the information.
-Then, as you learn how it works, you pick out more patterns over time.
+**ASCII 아트를 사용해서 정보 밀도를 높이세요!**
+예를 들어, `ls`는 권한을 스캔 가능한 방식으로 표시합니다.
+처음 볼 때는 대부분의 정보를 무시할 수 있습니다.
+그런 다음 작동 방식을 배우면서 시간이 지날수록 더 많은 패턴을 발견하게 됩니다.
 
 ```
 -rw-r--r-- 1 root root     68 Aug 22 23:20 resolv.conf
@@ -697,30 +626,30 @@ drwxr-xr-x 2 root root   4.0K Jul 20 14:57 skel
 -rw-r--r-- 1 root root      0 Jul 20 14:43 subuid
 ```
 
-**Use color with intention.**
-For example, you might want to highlight some text so the user notices it, or use red to indicate an error.
-Don’t overuse it—if everything is a different color, then the color means nothing and only makes it harder to read.
+**의도를 가지고 색상을 사용하세요.**
+예를 들어, 사용자가 알아차릴 수 있도록 텍스트를 강조하거나 오류를 나타내기 위해 빨간색을 사용할 수 있습니다.
+과도하게 사용하지 마세요—모든 것이 다른 색상이면 색상의 의미가 사라지고 읽기만 더 어려워집니다.
 
-**Disable color if your program is not in a terminal or the user requested it.**
-These things should disable colors:
+**프로그램이 터미널에서 실행되지 않거나 사용자가 요청한 경우 색상을 비활성화하세요.**
+다음과 같은 경우에 색상이 비활성화되어야 합니다:
 
-- `stdout` or `stderr` is not an interactive terminal (a TTY).
-  It’s best to individually check—if you’re piping `stdout` to another program, it’s still useful to get colors on `stderr`.
-- The `NO_COLOR` environment variable is set.
-- The `TERM` environment variable has the value `dumb`.
-- The user passes the option `--no-color`.
-- You may also want to add a `MYAPP_NO_COLOR` environment variable in case users want to disable color specifically for your program.
+- `stdout` 또는 `stderr`이 대화형 터미널(TTY)이 아닌 경우.
+  개별적으로 확인하는 것이 가장 좋습니다—`stdout`을 다른 프로그램으로 파이핑하는 경우에도 `stderr`에서 색상을 받는 것이 유용할 수 있습니다.
+- `NO_COLOR` 환경 변수가 설정된 경우.
+- `TERM` 환경 변수의 값이 `dumb`인 경우.
+- 사용자가 `--no-color` 옵션을 전달하는 경우.
+- 사용자가 특별히 당신의 프로그램에 대해서만 색상을 비활성화하고 싶은 경우를 위해 `MYAPP_NO_COLOR` 환경 변수를 추가할 수도 있습니다.
 
-_Further reading: [no-color.org](https://no-color.org/), [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)_
+_추가 자료: [no-color.org](https://no-color.org/), [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)_
 
-**If `stdout` is not an interactive terminal, don’t display any animations.**
-This will stop progress bars turning into Christmas trees in CI log output.
+**`stdout`이 대화형 터미널이 아닌 경우 애니메이션을 표시하지 마세요.**
+이렇게 하면 CI 로그 출력에서 진행 표시줄이 크리스마스 트리처럼 보이는 것을 막을 수 있습니다.
 
-**Use symbols and emoji where it makes things clearer.**
-Pictures can be better than words if you need to make several things distinct, catch the user’s attention, or just add a bit of character.
-Be careful, though—it can be easy to overdo it and make your program look cluttered or feel like a toy.
+**명확성을 높일 수 있는 경우 기호와 이모지를 사용하세요.**
+여러 가지를 구별해야 하거나, 사용자의 주의를 끌거나, 단순히 특색을 더하고 싶을 때는 그림이 단어보다 나을 수 있습니다.
+하지만 주의하세요—과도하게 사용하면 프로그램이 복잡해 보이거나 장난감처럼 느껴질 수 있습니다.
 
-For example, [yubikey-agent](https://github.com/FiloSottile/yubikey-agent) uses emoji to add structure to the output so it isn’t just a wall of text, and a ❌ to draw your attention to an important piece of information:
+예를 들어, [yubikey-agent](https://github.com/FiloSottile/yubikey-agent)는 출력에 구조를 추가하기 위해 이모지를 사용하여 단순한 텍스트 벽이 되지 않도록 하고, ❌를 사용하여 중요한 정보에 주의를 끕니다:
 
 ```shell-session
 $ yubikey-agent -setup
@@ -742,166 +671,168 @@ UwlHnUFXgENO3ifPZd8zoSKMxESxxot4tMgvfXjmRp5G3BGrAnonncE7Aj11pn3SSYgEcrrn2sMyLGpV
 💭 Remember: everything breaks, have a backup plan for when this YubiKey does.
 ```
 
-**By default, don’t output information that’s only understandable by the creators of the software.**
-If a piece of output serves only to help you (the developer) understand what your software is doing, it almost certainly shouldn’t be displayed to normal users by default—only in verbose mode.
+**기본적으로 소프트웨어 제작자만이 이해할 수 있는 정보는 출력하지 마세요.**
+출력이 당신(개발자)이 소프트웨어가 하는 일을 이해하는 데만 도움이 된다면, 일반 사용자에게는 기본적으로 표시되지 않아야 하며—상세 모드에서만 표시되어야 합니다.
 
-Invite usability feedback from outsiders and people who are new to your project.
-They’ll help you see important issues that you are too close to the code to notice.
+프로젝트 외부의 사람들과 프로젝트를 처음 접하는 사람들로부터 사용성 피드백을 받으세요.
+그들은 당신이 코드에 너무 가까이 있어서 알아차리지 못하는 중요한 문제들을 볼 수 있도록 도와줄 것입니다.
 
-**Don’t treat `stderr` like a log file, at least not by default.**
-Don’t print log level labels (`ERR`, `WARN`, etc.) or extraneous contextual information, unless in verbose mode.
+**적어도 기본적으로는 `stderr`를 로그 파일처럼 취급하지 마세요.**
+상세 모드가 아닌 한, 로그 레벨 라벨(`ERR`, `WARN` 등)이나 불필요한 상황 정보를 출력하지 마세요.
 
-**Use a pager (e.g. `less`) if you are outputting a lot of text.**
-For example, `git diff` does this by default.
-Using a pager can be error-prone, so be careful with your implementation such that you don’t make the experience worse for the user.
-You shouldn’t use a pager if `stdin` or `stdout` is not an interactive terminal.
+**많은 텍스트를 출력하는 경우 페이저(예: `less`)를 사용하세요.**
+예를 들어, `git diff`는 기본적으로 이렇게 합니다.
+페이저 사용은 오류가 발생하기 쉬우므로, 구현 시 사용자 경험을 악화시키지 않도록 주의하세요.
+`stdin` 또는 `stdout`이 대화형 터미널인 경우에만 페이저를 사용합니다.
 
-A good sensible set of options to use for `less` is `less -FIRX`.
-This does not page if the content fills one screen, ignores case when you search, enables color and formatting, and leaves the contents on the screen when `less` quits.
+`less`에 사용할 수 있는 적절한 옵션 세트는 `less -FIRX`입니다.
+이는 내용이 한 화면을 채우는 경우 페이징하지 않고, 검색 시 대소문자를 무시하며, 색상과 서식을 활성화하고, `less`가 종료될 때 내용을 화면에 남겨둡니다.
 
-There might be libraries in your language that are more robust than piping to `less`.
-For example, [pypager](https://github.com/prompt-toolkit/pypager) in Python.
+당신이 사용하는 언어에는 `less`로 파이핑하는 것보다 더 강력한 라이브러리가 있을 수 있습니다.
+예를 들어, Python의 [pypager](https://github.com/prompt-toolkit/pypager)가 있습니다.
 
-### Errors {#errors}
+### 오류 {#errors}
 
-One of the most common reasons to consult documentation is to fix errors.
-If you can make errors into documentation, then this will save the user loads of time.
+문서를 참조하는 가장 일반적인 이유 중 하나는 오류를 수정하기 위해서입니다.
+오류를 문서화할 수 있다면, 이는 사용자의 많은 시간을 절약해줄 것입니다.
 
-**Catch errors and [rewrite them for humans](https://www.nngroup.com/articles/error-message-guidelines/).**
-If you’re expecting an error to happen, catch it and rewrite the error message to be useful.
-Think of it like a conversation, where the user has done something wrong and the program is guiding them in the right direction.
-Example: “Can’t write to file.txt. You might need to make it writable by running ‘chmod +w file.txt’.”
+**오류를 잡아내고 [사람이 이해하기 쉽게 다시 작성하세요](https://www.nngroup.com/articles/error-message-guidelines/).**
+오류가 발생할 것으로 예상되는 경우, 그것을 잡아내고 오류 메시지를 유용하게 다시 작성하세요.
+사용자가 잘못된 작업을 했을 때 프로그램이 올바른 방향으로 안내하는 대화처럼 생각하세요.
+예: "file.txt에 쓸 수 없습니다. 'chmod +w file.txt'를 실행하여 쓰기 가능하게 만들어야 할 수 있습니다."
 
-**Signal-to-noise ratio is crucial.**
-The more irrelevant output you produce, the longer it’s going to take the user to figure out what they did wrong.
-If your program produces multiple errors of the same type, consider grouping them under a single explanatory header instead of printing many similar-looking lines.
+**신호 대 잡음비가 중요합니다.**
+관련 없는 출력을 많이 생성할수록 사용자가 자신이 무엇을 잘못했는지 파악하는 데 더 오랜 시간이 걸립니다.
+프로그램이 동일한 유형의 여러 오류를 생성하는 경우, 비슷해 보이는 여러 줄을 출력하는 대신 하나의 설명 헤더 아래에 그룹화하는 것을 고려하세요.
 
-**Consider where the user will look first.**
-Put the most important information at the end of the output.
-The eye will be drawn to red text, so use it intentionally and sparingly.
+**사용자가 먼저 어디를 볼지 고려하세요.**
+가장 중요한 정보를 출력의 끝 부분에 배치하세요.
+빨간색 텍스트는 시선을 끌기 때문에, 의도적으로 그리고 절제하여 사용하세요.
 
-**If there is an unexpected or unexplainable error, provide debug and traceback information, and instructions on how to submit a bug.**
-That said, don’t forget about the signal-to-noise ratio: you don’t want to overwhelm the user with information they don’t understand.
-Consider writing the debug log to a file instead of printing it to the terminal.
+**예상치 못하거나 설명할 수 없는 오류가 있는 경우, 디버그 및 트레이스백 정보와 버그를 제출하는 방법에 대한 지침을 제공하세요.**
+단, 신호 대 잡음비를 잊지 마세요: 사용자가 이해하지 못하는 정보로 압도하고 싶지는 않을 것입니다.
+디버그 로그를 터미널에 출력하는 대신 파일에 작성하는 것을 고려하세요.
 
-**Make it effortless to submit bug reports.**
-One nice thing you can do is provide a URL and have it pre-populate as much information as possible.
+**버그 리포트를 제출하는 것을 쉽게 만드세요.**
+할 수 있는 좋은 방법 중 하나는 URL을 제공하고 가능한 한 많은 정보를 미리 채워넣는 것입니다.
 
-### Arguments and flags {#arguments-and-flags}
+_더 읽을거리: [Google: Writing Helpful Error Messages](https://developers.google.com/tech-writing/error-messages), [Nielsen Norman Group: Error-Message Guidelines](https://www.nngroup.com/articles/error-message-guidelines)_
 
-A note on terminology:
+### 인자와 플래그 {#arguments-and-flags}
 
-- _Arguments_, or _args_, are positional parameters to a command.
-  For example, the file paths you provide to `cp` are args.
-  The order of args is often important: `cp foo bar` means something different from `cp bar foo`.
-- _Flags_ are named parameters, denoted with either a hyphen and a single-letter name (`-r`) or a double hyphen and a multiple-letter name (`--recursive`).
-  They may or may not also include a user-specified value (`--file foo.txt`, or `--file=foo.txt`).
-  The order of flags, generally speaking, does not affect program semantics.
+용어에 대한 참고 사항:
 
-**Prefer flags to args.**
-It’s a bit more typing, but it makes it much clearer what is going on.
-It also makes it easier to make changes to how you accept input in the future.
-Sometimes when using args, it’s impossible to add new input without breaking existing behavior or creating ambiguity.
+- _인자_ 또는 _args_는 명령어에 대한 위치 매개변수입니다.
+  예를 들어, `cp`에 제공하는 파일 경로가 args입니다.
+  args의 순서는 종종 중요합니다: `cp foo bar`는 `cp bar foo`와 다른 의미를 가집니다.
+- _플래그_는 하이픈과 단일 문자 이름(`-r`) 또는 이중 하이픈과 여러 문자 이름(`--recursive`)으로 표시되는 명명된 매개변수입니다.
+  사용자가 지정한 값을 포함할 수도 있고 포함하지 않을 수도 있습니다(`--file foo.txt` 또는 `--file=foo.txt`).
+  일반적으로 플래그의 순서는 프로그램의 의미에 영향을 미치지 않습니다.
 
-_Citation: [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)._
+**인자보다 플래그를 선호하세요.**
+조금 더 타이핑해야 하지만, 무슨 일이 일어나는지 훨씬 더 명확하게 알 수 있습니다.
+또한 향후 입력을 받는 방식을 변경하기가 더 쉽습니다.
+인자를 사용할 때는 기존 동작을 깨뜨리거나 모호성을 만들지 않고 새로운 입력을 추가하는 것이 불가능할 수 있습니다.
 
-**Have full-length versions of all flags.**
-For example, have both `-h` and `--help`.
-Having the full version is useful in scripts where you want to be verbose and descriptive, and you don’t have to look up the meaning of flags everywhere.
+_인용: [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)._
 
-_Citation: [GNU Coding Standards](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html)._
+**모든 플래그의 전체 길이 버전을 가지세요.**
+예를 들어, `-h`와 `--help` 둘 다 있어야 합니다.
+전체 버전은 자세하고 설명적이어야 하는 스크립트에서 유용하며, 플래그의 의미를 찾아볼 필요가 없습니다.
 
-**Only use one-letter flags for commonly used flags,** particularly at the top-level when using subcommands.
-That way you don’t “pollute” your namespace of short flags, forcing you to use convoluted letters and cases for flags you add in the future.
+_인용: [GNU Coding Standards](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html)._
 
-**Multiple arguments are fine for simple actions against multiple files.**
-For example, `rm file1.txt file2.txt file3.txt`.
-This also makes it work with globbing: `rm *.txt`.
+**한 글자 플래그는 자주 사용되는 플래그에만 사용하세요,** 특히 하위 명령을 사용할 때 최상위 수준에서 그렇게 하세요.
+이렇게 하면 짧은 플래그의 네임스페이스를 "오염"시키지 않고, 나중에 추가하는 플래그에 복잡한 글자와 대소문자를 사용할 필요가 없습니다.
 
-**If you’ve got two or more arguments for different things, you’re probably doing something wrong.**
-The exception is a common, primary action, where the brevity is worth memorizing.
-For example, `cp <source> <destination>`.
+**여러 파일에 대한 간단한 작업에는 여러 인자를 사용해도 좋습니다.**
+예를 들어, `rm file1.txt file2.txt file3.txt`.
+이는 glob 패턴과도 잘 작동합니다: `rm *.txt`.
 
-_Citation: [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)._
+**서로 다른 것에 대해 두 개 이상의 인자가 있다면, 아마도 뭔가 잘못하고 있는 것입니다.**
+예외는 간결함이 기억할 가치가 있는 일반적이고 기본적인 동작입니다.
+예를 들어, `cp <source> <destination>`.
 
-**Use standard names for flags, if there is a standard.**
-If another commonly used command uses a flag name, it’s best to follow that existing pattern.
-That way, a user doesn’t have to remember two different options (and which command it applies to), and users can even guess an option without having to look at the help text.
+_인용: [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)._
 
-Here's a list of commonly used options:
+**표준이 있다면 플래그에 표준 이름을 사용하세요.**
+다른 일반적으로 사용되는 명령이 플래그 이름을 사용한다면, 그 기존 패턴을 따르는 것이 best practice입니다.
+이렇게 하면 사용자가 두 가지 다른 옵션(그리고 어떤 명령에 적용되는지)을 기억할 필요가 없으며, 도움말 텍스트를 보지 않고도 옵션을 추측할 수 있습니다.
 
-- `-a`, `--all`: All.
-  For example, `ps`, `fetchmail`.
-- `-d`, `--debug`: Show debugging output.
-- `-f`, `--force`: Force.
-  For example, `rm -f` will force the removal of files, even if it thinks it does not have permission to do it.
-  This is also useful for commands which are doing something destructive that usually require user confirmation, but you want to force it to do that destructive action in a script.
-- `--json`: Display JSON output.
-  See the [output](#output) section.
-- `-h`, `--help`: Help.
-  This should only mean help.
-  See the [help](#help) section.
-- `--no-input`: See the [interactivity](#interactivity) section.
-- `-o`, `--output`: Output file.
-  For example, `sort`, `gcc`.
-- `-p`, `--port`: Port.
-  For example, `psql`, `ssh`.
-- `-q`, `--quiet`: Quiet.
-  Display less output.
-  This is particularly useful when displaying output for humans that you might want to hide when running in a script.
-- `-u`, `--user`: User.
-  For example, `ps`, `ssh`.
-- `--version`: Version.
-- `-v`: This can often mean either verbose or version.
-  You might want to use `-d` for verbose and this for version, or for nothing to avoid confusion.
+다음은 일반적으로 사용되는 옵션들의 목록입니다:
 
-**Make the default the right thing for most users.**
-Making things configurable is good, but most users are not going to find the right flag and remember to use it all the time (or alias it).
-If it’s not the default, you’re making the experience worse for most of your users.
+- `-a`, `--all`: 모두.
+  예를 들어, `ps`, `fetchmail`.
+- `-d`, `--debug`: 디버깅 출력을 표시.
+- `-f`, `--force`: 강제 실행.
+  예를 들어, `rm -f`는 권한이 없다고 생각하더라도 파일을 강제로 삭제합니다.
+  이는 일반적으로 사용자 확인이 필요한 파괴적인 작업을 수행하는 명령에도 유용하지만, 스크립트에서 해당 파괴적인 작업을 강제로 수행하고 싶을 때 사용합니다.
+- `--json`: JSON 출력을 표시.
+  [output](#output) 섹션을 참조하세요.
+- `-h`, `--help`: 도움말.
+  이는 도움말만을 의미해야 합니다.
+  [help](#help) 섹션을 참조하세요.
+- `--no-input`: [interactivity](#interactivity) 섹션을 참조하세요.
+- `-o`, `--output`: 출력 파일.
+  예를 들어, `sort`, `gcc`.
+- `-p`, `--port`: 포트.
+  예를 들어, `psql`, `ssh`.
+- `-q`, `--quiet`: 조용한 모드.
+  출력을 줄입니다.
+  이는 스크립트에서 실행할 때 숨기고 싶은 사람을 위한 출력을 표시할 때 특히 유용합니다.
+- `-u`, `--user`: 사용자.
+  예를 들어, `ps`, `ssh`.
+- `--version`: 버전.
+- `-v`: 이는 종종 상세 출력(verbose) 또는 버전을 의미할 수 있습니다.
+  혼동을 피하기 위해 상세 출력에는 `-d`를 사용하고 이것은 버전을 위해 사용하거나 아무것도 사용하지 않을 수 있습니다.
 
-For example, `ls` has terse default output to optimize for scripts and other historical reasons, but if it were designed today, it would probably default to `ls -lhFGT`.
+**대부분의 사용자에게 맞는 것을 기본값으로 만드세요.**
+설정 가능하게 만드는 것은 좋지만, 대부분의 사용자는 올바른 플래그를 찾아서 항상 사용하는 것을 기억하지 않을 것입니다(또는 별칭을 만들지 않을 것입니다).
+기본값이 아니라면, 대부분의 사용자에게 더 나쁜 경험을 제공하는 것입니다.
 
-**Prompt for user input.**
-If a user doesn’t pass an argument or flag, prompt for it.
-(See also: [Interactivity](#interactivity))
+예를 들어, `ls`는 스크립트와 다른 역사적인 이유로 간단한 기본 출력을 가지고 있지만, 오늘날 설계된다면 아마도 `ls -lhFGT`가 기본값일 것입니다.
 
-**Never _require_ a prompt.**
-Always provide a way of passing input with flags or arguments.
-If `stdin` is not an interactive terminal, skip prompting and just require those flags/args.
+**사용자 입력을 요청하세요.**
+사용자가 인자나 플래그를 전달하지 않으면, 입력을 요청하세요.
+([Interactivity](#interactivity) 참조)
 
-**Confirm before doing anything dangerous.**
-A common convention is to prompt for the user to type `y` or `yes` if running interactively, or requiring them to pass `-f` or `--force` otherwise.
+**프롬프트를 _절대_ 필수로 하지 마세요.**
+항상 플래그나 인자로 입력을 전달할 수 있는 방법을 제공하세요.
+`stdin`이 대화형 터미널이 아니라면, 프롬프트를 건너뛰고 해당 플래그/인자를 필수로 요구하세요.
 
-“Dangerous” is a subjective term, and there are differing levels of danger:
+**위험한 작업을 수행하기 전에 확인하세요.**
+일반적인 관례는 대화형으로 실행 중일 때 사용자에게 `y` 또는 `yes`를 입력하도록 요청하거나, 그렇지 않은 경우 `-f` 또는 `--force`를 전달하도록 요구하는 것입니다.
 
-- **Mild:** A small, local change such as deleting a file.
-  You might want to prompt for confirmation, you might not.
-  For example, if the user is explicitly running a command called something like “delete,” you probably don’t need to ask.
-- **Moderate:** A bigger local change like deleting a directory, a remote change like deleting a resource of some kind, or a complex bulk modification that can’t be easily undone.
-  You usually want to prompt for confirmation here.
-  Consider giving the user a way to “dry run” the operation so they can see what’ll happen before they commit to it.
-- **Severe:** Deleting something complex, like an entire remote application or server.
-  You don’t just want to prompt for confirmation here—you want to make it hard to confirm by accident.
-  Consider asking them to type something non-trivial such as the name of the thing they’re deleting.
-  Let them alternatively pass a flag such as `--confirm="name-of-thing"`, so it’s still scriptable.
+"위험한"은 주관적인 용어이며, 다양한 수준의 위험이 있습니다:
 
-Consider whether there are non-obvious ways to accidentally destroy things.
-For example, imagine a situation where changing a number in a configuration file from 10 to 1 means that 9 things will be implicitly deleted—this should be considered a severe risk, and should be difficult to do by accident.
+- **경미:** 파일 삭제와 같은 작은 로컬 변경.
+  확인을 요청할 수도 있고, 그렇지 않을 수도 있습니다.
+  예를 들어, 사용자가 명시적으로 "delete"와 같은 명령을 실행하는 경우에는 아마도 물어볼 필요가 없을 것입니다.
+- **중간:** 디렉토리 삭제와 같은 더 큰 로컬 변경, 어떤 종류의 리소스를 삭제하는 것과 같은 원격   변경, 또는 쉽게 되돌릴 수 없는 복잡한 대량 수정.
+여기서는 일반적으로 확인을 요청하고 싶을 것입니다.
+  사용자에게 작업을 실제로 수행하기 전에 어떤 일이 일어날지 볼 수 있는 "dry run" 방법을 제공하는 것을 고려하세요.
+- **심각:** 전체 원격 애플리케이션이나 서버와 같은 복잡한 것을 삭제하는 경우.
+  여기서는 단순히 확인을 요청하는 것이 아니라, 실수로 확인하기 어렵게 만들고 싶을 것입니다.
+  삭제하려는 것의 이름과 같은 간단하지 않은 것을 입력하도록 요청하는 것을 고려하세요.
+  대안으로 `--confirm="name-of-thing"`과 같은 플래그를 전달할 수 있게 하여, 여전히 스크립트로 작성할 수 있게 하세요.
 
-**If input or output is a file, support `-` to read from `stdin` or write to `stdout`.**
-This lets the output of another command be the input of your command and vice versa, without using a temporary file.
-For example, `tar` can extract files from `stdin`:
+실수로 물건을 파괴할 수 있는 명백하지 않은 방법이 있는지 고려하세요.
+예를 들어, 구성 파일의 숫자를 10에서 1로 변경하면 9개의 항목이 암묵적으로 삭제되는 상황을 상상해보세요—이는 심각한 위험으로 간주되어야 하며, 실수로 하기 어려워야 합니다.
+
+**입력이나 출력이 파일인 경우, `-`를 지원하여 `stdin`에서 읽거나 `stdout`에 쓰도록 하세요.**
+이렇게 하면 임시 파일을 사용하지 않고도 다른 명령의 출력을 당신의 명령의 입력으로, 또는 그 반대로 사용할 수 있습니다.
+예를 들어, `tar`는 `stdin`에서 파일을 추출할 수 있습니다:
 
 ```
 $ curl https://example.com/something.tar.gz | tar xvf -
 ```
 
-**If a flag can accept an optional value, allow a special word like “none.”**
-For example, `ssh -F` takes an optional filename of an alternative `ssh_config` file, and `ssh -F none` runs SSH with no config file. Don’t just use a blank value—this can make it ambiguous whether arguments are flag values or arguments.
+**플래그가 선택적 값을 받을 수 있는 경우, "none"과 같은 특별한 단어를 허용하세요.**
+예를 들어, `ssh -F`는 대체 `ssh_config` 파일의 선택적 파일 이름을 받으며, `ssh -F none`은 구성 파일 없이 SSH를 실행합니다. 빈 값을 사용하지 마세요—이는 인자가 플래그 값인지 인자인지 모호하게 만들 수 있습니다.
 
-**If possible, make arguments, flags and subcommands order-independent.**
-A lot of CLIs, especially those with subcommands, have unspoken rules on where you can put various arguments.
-For example a command might have a `--foo` flag that only works if you put it before the subcommand:
+**가능하다면, 인자, 플래그, 하위 명령의 순서를 독립적으로 만드세요.**
+많은 CLI, 특히 하위 명령이 있는 CLI는 다양한 인자를 어디에 둘 수 있는지에 대한 명시되지 않은 규칙이 있습니다.
+예를 들어 명령에 하위 명령 앞에 두어야만 작동하는 `--foo` 플래그가 있을 수 있습니다:
 
 ```
 mycmd --foo=1 subcmd
@@ -911,96 +842,97 @@ $ mycmd subcmd --foo=1
 unknown flag: --foo
 ```
 
-This can be very confusing for the user—especially given that one of the most common things users do when trying to get a command to work is to hit the up arrow to get the last invocation, stick another option on the end, and run it again.
-If possible, try to make both forms equivalent, although you might run up against the limitations of your argument parser.
+이는 사용자에게 매우 혼란스러울 수 있습니다—특히 사용자가 명령을 작동시키려고 할 때 가장 일반적으로 하는 일 중 하나는 위쪽 화살표를 눌러 마지막 호출을 가져오고, 끝에 다른 옵션을 추가하고, 다시 실행하는 것이기 때문입니다.
+가능하다면 두 형식을 동등하게 만들려고 시도하세요. 단, 인자 파서의 제한에 부딪힐 수 있습니다.
 
-**Do not read secrets directly from flags.**
-When a command accepts a secret, eg. via a `--password` argument,
-the argument value will leak the secret into `ps` output and potentially shell history.
-And, this sort of flag encourages the use of insecure environment variables for secrets.
+**플래그에서 직접 비밀을 읽지 마세요.**
+명령이 `--password` 인자와 같이 비밀을 받을 때,
+인자 값은 `ps` 출력과 잠재적으로 셸 히스토리에 비밀을 유출할 것입니다.
+그리고, 이러한 종류의 플래그는 비밀에 대해 안전하지 않은 환경 변수의 사용을 조장합니다.
+(환경 변수는 다른 사용자가 읽을 수 있고 디버그 로그에 값이 남는 등의 이유로 안전하지 않습니다.)
 
-Consider accepting sensitive data only via files, e.g. with a `--password-file` argument, or via `STDIN`.
-A `--password-file` argument allows a secret to be passed in discreetly, in a wide variety of contexts.
+민감한 데이터는 `--password-file` 인자와 같이 파일을 통해서만, 또는 `STDIN`을 통해서만 받는 것을 고려하세요.
+`--password-file` 인자는 다양한 상황에서 비밀을 신중하게 전달할 수 있게 합니다.
 
-(It’s possible to pass a file’s contents into an argument in Bash by using `--password $(< password.txt)`.
-This approach has the same security issue of leaking the file’s contents into the output of `ps`.
-It’s best avoided.)
+(Bash에서 `--password $(< password.txt)`를 사용하여 파일의 내용을 인자로 전달할 수 있습니다.
+이 접근 방식은 파일의 내용을 `ps` 출력에 유출하는 동일한 보안 문제가 있습니다.
+피하는 것이 좋습니다.)
 
-### Interactivity {#interactivity}
+### 상호작용 {#interactivity}
 
-**Only use prompts or interactive elements if `stdin` is an interactive terminal (a TTY).**
-This is a pretty reliable way to tell whether you’re piping data into a command or whether it's being run in a script, in which case a prompt won’t work and you should throw an error telling the user what flag to pass.
+**`stdin`이 대화형 터미널(TTY)인 경우에만 프롬프트나 대화형 요소를 사용하세요.**
+이는 명령에 데이터를 파이프로 전달하는지 또는 스크립트에서 실행되는지 여부를 판단하는 꽤 신뢰할 만한 방법입니다. 후자의 경우 프롬프트가 작동하지 않으므로 사용자에게 어떤 플래그를 전달해야 하는지 알려주는 오류를 발생시켜야 합니다.
 
-**If `--no-input` is passed, don’t prompt or do anything interactive.**
-This allows users an explicit way to disable all prompts in commands.
-If the command requires input, fail and tell the user how to pass the information as a flag.
+**`--no-input`이 전달되면, 프롬프트를 표시하거나 대화형 작업을 수행하지 마세요.**
+이는 사용자에게 명령의 모든 프롬프트를 비활성화하는 명시적인 방법을 제공합니다.
+명령에 입력이 필요한 경우, 실패하고 사용자에게 정보를 플래그로 전달하는 방법을 알려주세요.
 
-**If you’re prompting for a password, don’t print it as the user types.**
-This is done by turning off echo in the terminal.
-Your language should have helpers for this.
+**비밀번호를 입력받을 때는 사용자가 입력하는 동안 표시하지 마세요.**
+이는 터미널에서 에코를 끄는 것으로 수행됩니다.
+당신의 언어에는 이를 위한 헬퍼가 있어야 합니다.
 
-**Let the user escape.**
-Make it clear how to get out.
-(Don’t do what vim does.)
-If your program hangs on network I/O etc, always make Ctrl-C still work.
-If it’s a wrapper around program execution where Ctrl-C can’t quit (SSH, tmux, telnet, etc), make it clear how to do that.
-For example, SSH allows escape sequences with the `~` escape character.
+**사용자가 탈출할 수 있게 하세요.**
+빠져나가는 방법을 명확하게 만드세요.
+(vim이 하는 것처럼 하지 마세요.)
+프로그램이 네트워크 I/O 등에서 멈추면, 항상 Ctrl-C가 작동하게 하세요.
+Ctrl-C로 종료할 수 없는 프로그램 실행(SSH, tmux, telnet 등)을 감싸는 경우, 그 방법을 명확하게 하세요.
+예를 들어, SSH는 `~` 이스케이프 문자로 이스케이프 시퀀스를 허용합니다.
 
-### Subcommands
+### 하위 명령 {#subcommands}
 
-If you’ve got a tool that’s sufficiently complex, you can reduce its complexity by making a set of subcommands.
-If you have several tools that are very closely related, you can make them easier to use and discover by combining them into a single command (for example, RCS vs. Git).
+충분히 복잡한 도구가 있다면, 하위 명령 집합을 만들어 복잡성을 줄일 수 있습니다.
+매우 밀접하게 관련된 여러 도구가 있다면, 하나의 명령으로 결합하여 사용하고 발견하기 쉽게 만들 수 있습니다(예: RCS vs. Git).
 
-They’re useful for sharing stuff—global flags, help text, configuration, storage mechanisms.
+이들은 전역 플래그, 도움말 텍스트, 구성, 저장 메커니즘과 같은 것들을 공유하는 데 유용합니다.
 
-**Be consistent across subcommands.**
-Use the same flag names for the same things, have similar output formatting, etc. 
+**하위 명령 전체에서 일관성을 유지하세요.**
+동일한 것에 대해 동일한 플래그 이름을 사용하고, 비슷한 출력 형식을 가지세요 등.
 
-**Use consistent names for multiple levels of subcommand.**
-If a complex piece of software has lots of objects and operations that can be performed on those objects, it is a common pattern to use two levels of subcommand for this, where one is a noun and one is a verb.
-For example, `docker container create`.
-Be consistent with the verbs you use across different types of objects.
+**여러 수준의 하위 명령에 대해 일관된 이름을 사용하세요.**
+복잡한 소프트웨어가 많은 객체와 그 객체들에 대해 수행할 수 있는 작업이 있는 경우, 하나는 명사이고 하나는 동사인 두 수준의 하위 명령을 사용하는 것이 일반적인 패턴입니다.
+예를 들어, `docker container create`.
+서로 다른 유형의 객체에 대해 일관된 동사를 사용하세요.
 
-Either `noun verb` or `verb noun` ordering works, but `noun verb` seems to be more common.
+`명사 동사` 또는 `동사 명사` 순서 둘 다 작동하지만, `명사 동사`가 더 일반적인 것 같습니다.
 
-_Further reading: [User experience, CLIs, and breaking the world, by John Starich](https://uxdesign.cc/user-experience-clis-and-breaking-the-world-baed8709244f)._
+_더 읽을거리: [User experience, CLIs, and breaking the world, by John Starich](https://uxdesign.cc/user-experience-clis-and-breaking-the-world-baed8709244f)._
 
-**Don’t have ambiguous or similarly-named commands.**
-For example, having two subcommands called “update” and “upgrade” is quite confusing.
-You might want to use different words, or disambiguate with extra words.
+**모호하거나 비슷한 이름의 명령을 가지지 마세요.**
+예를 들어, "update"와 "upgrade"라는 두 개의 하위 명령을 가지는 것은 꽤 혼란스럽습니다.
+다른 단어를 사용하거나, 추가 단어로 모호성을 없애고 싶을 수 있습니다.
 
-### Robustness {#robustness-guidelines}
+### 안정성 {#robustness-guidelines}
 
-**Validate user input.**
-Everywhere your program accepts data from the user, it will eventually be given bad data.
-Check early and bail out before anything bad happens, and [make the errors understandable](#errors).
+**사용자 입력을 검증하세요.**
+프로그램이 사용자로부터 데이터를 받는 모든 곳에서, 결국 잘못된 데이터가 입력될 것입니다.
+문제가 발생하기 전에 미리 확인하고 중단하며, [오류를 이해하기 쉽게 만드세요](#errors).
 
-**Responsive is more important than fast.**
-Print something to the user in <100ms.
-If you’re making a network request, print something before you do it so it doesn’t hang and look broken.
+**빠른 것보다 반응성이 더 중요합니다.**
+100ms 이내에 사용자에게 무언가를 출력하세요.
+네트워크 요청을 할 경우, 실행 전에 무언가를 출력하여 멈춰있거나 고장난 것처럼 보이지 않도록 하세요.
 
-**Show progress if something takes a long time.**
-If your program displays no output for a while, it will look broken.
-A good spinner or progress indicator can make a program appear to be faster than it is.
+**작업이 오래 걸리면 진행 상황을 보여주세요.**
+프로그램이 한동안 아무 출력도 하지 않으면, 고장난 것처럼 보일 것입니다.
+좋은 스피너나 진행 표시기는 프로그램이 실제보다 더 빠르게 보이게 만들 수 있습니다.
 
-Ubuntu 20.04 has a nice progress bar that sticks to the bottom of the terminal.
+Ubuntu 20.04는 터미널 하단에 고정되는 멋진 진행 표시줄이 있습니다.
 
 <!-- (TK reproduce this as a code block or animated SVG) -->
 
-If the progress bar gets stuck in one place for a long time, the user won’t know if stuff is still happening or if the program’s crashed.
-It’s good to show estimated time remaining, or even just have an animated component, to reassure them that you’re still working on it.
+진행 표시줄이 한 곳에 오래 멈춰있으면, 사용자는 작업이 여전히 진행 중인지 프로그램이 충돌했는지 알 수 없습니다.
+남은 예상 시간을 보여주거나, 최소한 애니메이션 요소라도 있으면 여전히 작업 중임을 알려줄 수 있습니다.
 
-There are many good libraries for generating progress bars.
-For example, [tqdm](https://github.com/tqdm/tqdm) for Python, [schollz/progressbar](https://github.com/schollz/progressbar) for Go, and [node-progress](https://github.com/visionmedia/node-progress) for Node.js.
+진행 표시줄을 생성하는 좋은 라이브러리가 많이 있습니다.
+예를 들어, Python용 [tqdm](https://github.com/tqdm/tqdm), Go용 [schollz/progressbar](https://github.com/schollz/progressbar), Node.js용 [node-progress](https://github.com/visionmedia/node-progress)가 있습니다.
 
-**Do stuff in parallel where you can, but be thoughtful about it.**
-It’s already difficult to report progress in the shell; doing it for parallel processes is ten times harder.
-Make sure it’s robust, and that the output isn’t confusingly interleaved.
-If you can use a library, do so—this is code you don’t want to write yourself.
-Libraries like [tqdm](https://github.com/tqdm/tqdm) for Python and [schollz/progressbar](https://github.com/schollz/progressbar) for Go support multiple progress bars natively.
+**가능한 곳에서는 병렬로 작업하되, 신중하게 하세요.**
+쉘에서 진행 상황을 보고하는 것은 이미 어려운데, 병렬 프로세스에서는 열 배 더 어렵습니다.
+안정적이고 출력이 혼란스럽게 섞이지 않도록 하세요.
+라이브러리를 사용할 수 있다면 사용하세요—이는 직접 작성하고 싶지 않은 코드입니다.
+Python용 [tqdm](https://github.com/tqdm/tqdm)과 Go용 [schollz/progressbar](https://github.com/schollz/progressbar) 같은 라이브러리는 여러 진행 표시줄을 기본적으로 지원합니다.
 
-The upside is that it can be a huge usability gain.
-For example, `docker pull`’s multiple progress bars offer crucial insight into what’s going on.
+장점은 사용성이 크게 향상될 수 있다는 것입니다.
+예를 들어, `docker pull`의 여러 진행 표시줄은 진행 상황에 대한 중요한 통찰을 제공합니다.
 
 ```
 $ docker image pull ruby
@@ -1016,84 +948,84 @@ b0efebc74f25: Downloading [===========================================>       ] 
 9cb1ba6838a0: Download complete 
 ```
 
-One thing to be aware of: hiding logs behind progress bars when things go _well_ makes it much easier for the user to understand what’s going on, but if there is an error, make sure you print out the logs.
-Otherwise, it will be very hard to debug.
+주의할 점: 상황이 _잘_ 진행될 때 진행 표시줄 뒤에 로그를 숨기면 사용자가 상황을 이해하기 훨씬 쉽지만, 오류가 발생하면 반드시 로그를 출력하세요.
+그렇지 않으면 디버깅이 매우 어려울 것입니다.
 
-**Make things time out.**
-Allow network timeouts to be configured, and have a reasonable default so it doesn’t hang forever.
+**시간 제한을 설정하세요.**
+네트워크 타임아웃을 설정할 수 있게 하고, 영원히 멈추지 않도록 적절한 기본값을 설정하세요.
 
-**Make it idempotent.**
-If the program fails for some transient reason (e.g. the internet connection went down), you should be able to hit `<up>` and `<enter>` and it should pick up from where it left off.
+**복구 가능하게 만드세요.**
+프로그램이 일시적인 이유로 실패할 경우(예: 인터넷 연결이 끊김), `<up>`과 `<enter>`를 눌러서 중단된 지점부터 다시 시작할 수 있어야 합니다.
 
-**Make it crash-only.**
-This is the next step up from idempotence.
-If you can avoid needing to do any cleanup after operations, or you can defer that cleanup to the next run, your program can exit immediately on failure or interruption.
-This makes it both more robust and more responsive.
+**크래시 온리로 만드세요.**
+이는 멱등성의 다음 단계입니다.
+작업 후 정리가 필요 없게 하거나 정리를 다음 실행으로 미룰 수 있다면, 프로그램은 실패나 중단 시 즉시 종료될 수 있습니다.
+이렇게 하면 더 견고하고 반응성이 좋아집니다.
 
-_Citation: [Crash-only software: More than meets the eye](https://lwn.net/Articles/191059/)._
+_인용: [크래시 온리 소프트웨어: 겉보기와는 다르다](https://lwn.net/Articles/191059/)._
 
-**People are going to misuse your program.**
-Be prepared for that.
-They will wrap it in scripts, use it on bad internet connections, run many instances of it at once, and use it in environments you haven’t tested in, with quirks you didn’t anticipate.
-(Did you know macOS filesystems are case-insensitive but also case-preserving?)
+**사람들은 당신의 프로그램을 잘못 사용할 것입니다.**
+이에 대비하세요.
+그들은 스크립트로 감싸고, 불안정한 인터넷 연결에서 사용하고, 한 번에 여러 인스턴스를 실행하고, 테스트하지 않은 환경에서 예상치 못한 특이사항과 함께 사용할 것입니다.
+(macOS 파일시스템이 대소문자를 구분하지 않지만 보존한다는 것을 알고 계셨나요?)
 
-### Future-proofing {#future-proofing}
+### 미래 보장 {#future-proofing}
 
-In software of any kind, it’s crucial that interfaces don’t change without a lengthy and well-documented deprecation process.
-Subcommands, arguments, flags, configuration files, environment variables: these are all interfaces, and you’re committing to keeping them working.
-([Semantic versioning](https://semver.org/) can only excuse so much change; if you’re putting out a major version bump every month, it’s meaningless.)
+모든 종류의 소프트웨어에서, 인터페이스가 길고 잘 문서화된 폐기 과정 없이 변경되지 않는 것이 중요합니다.
+하위 명령, 인수, 플래그, 설정 파일, 환경 변수: 이들은 모두 인터페이스이며, 당신은 이들이 계속 작동하도록 유지하기로 약속한 것입니다.
+([시맨틱 버저닝](https://semver.org/)은 변경을 어느 정도만 정당화할 수 있습니다; 매달 메이저 버전을 올린다면, 그것은 무의미합니다.)
 
-**Keep changes additive where you can.**
-Rather than modify the behavior of a flag in a backwards-incompatible way, maybe you can add a new flag—as long as it doesn’t bloat the interface too much.
-(See also: [Prefer flags to args](#arguments-and-flags).)
+**가능한 한 변경사항을 추가적으로 유지하세요.**
+플래그의 동작을 이전 버전과 호환되지 않는 방식으로 수정하는 대신, 인터페이스가 너무 비대해지지 않는 한 새로운 플래그를 추가할 수 있습니다.
+(참고: [인수보다 플래그 선호](#arguments-and-flags).)
 
-**Warn before you make a non-additive change.**
-Eventually, you’ll find that you can’t avoid breaking an interface.
-Before you do, forewarn your users in the program itself: when they pass the flag you’re looking to deprecate, tell them it’s going to change soon.
-Make sure there’s a way they can modify their usage today to make it future-proof, and tell them how to do it.
+**비추가적 변경을 하기 전에 경고하세요.**
+결국, 인터페이스를 깨뜨리는 것을 피할 수 없다는 것을 알게 될 것입니다.
+그렇게 하기 전에, 프로그램 자체에서 사용자에게 미리 경고하세요: 폐기하려는 플래그를 사용할 때, 곧 변경될 것이라고 알려주세요.
+오늘 그들의 사용방식을 미래에도 사용할 수 있도록 수정하는 방법이 있는지 확인하고, 그 방법을 알려주세요.
 
-If possible, you should detect when they’ve changed their usage and not show the warning any more: now they won’t notice a thing when you finally roll out the change.
+가능하다면, 그들이 사용방식을 변경했을 때를 감지하고 더 이상 경고를 표시하지 않아야 합니다: 이제 변경사항을 최종적으로 적용할 때 아무것도 눈치채지 못할 것입니다.
 
-**Changing output for humans is usually OK.**
-The only way to make an interface easy to use is to iterate on it, and if the output is considered an interface, then you can’t iterate on it.
-Encourage your users to use `--plain` or `--json` in scripts to keep output stable (see [Output](#output)).
+**사람을 위한 출력을 변경하는 것은 보통 괜찮습니다.**
+인터페이스를 사용하기 쉽게 만드는 유일한 방법은 반복적으로 개선하는 것이며, 출력이 인터페이스로 간주된다면 개선할 수 없습니다.
+출력을 안정적으로 유지하기 위해 스크립트에서 `--plain`이나 `--json`을 사용하도록 사용자에게 권장하세요 ([출력](#output) 참조).
 
-**Don’t have a catch-all subcommand.**
-If you have a subcommand that’s likely to be the most-used one, you might be tempted to let people omit it entirely for brevity’s sake.
-For example, say you have a `run` command that wraps an arbitrary shell command:
+**포괄적인 서브커맨드를 만들지 마세요.**
+가장 많이 사용될 것 같은 서브커맨드가 있다면, 간결성을 위해 이를 완전히 생략하도록 하고 싶을 수 있습니다.
+예를 들어, 임의의 셸 명령을 감싸는 `run` 명령이 있다고 가정해보세요:
 
     $ mycmd run echo "hello world"
 
-You could make it so that if the first argument to `mycmd` isn’t the name of an existing subcommand, you assume the user means `run`, so they can just type this:
+`mycmd`의 첫 번째 인수가 기존 서브커맨드의 이름이 아닌 경우 사용자가 `run`을 의미한다고 가정하여 다음과 같이 입력할 수 있게 만들 수 있습니다:
 
     $ mycmd echo "hello world"
 
-This has a serious drawback, though: now you can never add a subcommand named `echo`—or _anything at all_—without risking breaking existing usages.
-If there’s a script out there that uses `mycmd echo`, it will do something entirely different after that user upgrades to the new version of your tool.
+하지만 이것은 심각한 단점이 있습니다: 이제 기존 사용법을 깨뜨릴 위험 없이는 `echo`라는 이름의 서브커맨드나 _다른 어떤 것도_ 추가할 수 없게 됩니다.
+`mycmd echo`를 사용하는 스크립트가 있다면, 사용자가 새 버전의 도구로 업그레이드한 후에는 완전히 다른 동작을 하게 될 것입니다.
 
-**Don’t allow arbitrary abbreviations of subcommands.**
-For example, say your command has an `install` subcommand.
-When you added it, you wanted to save users some typing, so you allowed them to type any non-ambiguous prefix, like `mycmd ins`, or even just `mycmd i`, and have it be an alias for `mycmd install`.
-Now you’re stuck: you can’t add any more commands beginning with `i`, because there are scripts out there that assume `i` means `install`.
+**하위 명령의 임의 약어를 허용하지 마세요.**
+예를 들어, 명령에 `install` 하위 명령이 있다고 가정해보세요.
+추가할 때, 사용자의 타이핑을 줄이기 위해 `mycmd ins`나 심지어 `mycmd i`와 같은 모호하지 않은 접두사를 입력할 수 있게 하여 `mycmd install`의 별칭이 되도록 했습니다.
+이제 곤란해졌습니다: `i`로 시작하는 명령을 더 이상 추가할 수 없습니다. `i`가 `install`을 의미한다고 가정하는 스크립트들이 있기 때문입니다.
 
-There’s nothing wrong with aliases—saving on typing is good—but they should be explicit and remain stable.
+별칭은 잘못된 것이 아닙니다—타이핑을 줄이는 것은 좋습니다—하지만 명시적이어야 하고 안정적으로 유지되어야 합니다.
 
-**Don’t create a “time bomb.”**
-Imagine it’s 20 years from now.
-Will your command still run the same as it does today, or will it stop working because some external dependency on the internet has changed or is no longer maintained?
-The server most likely to not exist in 20 years is the one that you are maintaining right now.
-(But don’t build in a blocking call to Google Analytics either.)
+**"시한 폭탄"을 만들지 마세요.**
+지금으로부터 20년 후를 상상해보세요.
+당신의 명령이 오늘처럼 똑같이 실행될까요, 아니면 인터넷의 외부 의존성이 변경되거나 더 이상 유지보수되지 않아 작동이 중단될까요?
+20년 후에 존재하지 않을 가능성이 가장 높은 서버는 당신이 지금 유지보수하고 있는 서버입니다.
+(하지만 Google Analytics에 대한 차단 호출을 내장하지도 마세요.)
 
-### Signals and control characters {#signals}
+### 신호와 제어 문자 {#signals}
 
-**If a user hits Ctrl-C (the INT signal), exit as soon as possible.**
-Say something immediately, before you start clean-up.
-Add a timeout to any clean-up code so it can’t hang forever.
+**사용자가 Ctrl-C(INT 신호)를 누르면, 가능한 한 빨리 종료하세요.**
+정리를 시작하기 전에 즉시 무언가를 말하세요.
+정리 코드에 시간 제한을 추가하여 영원히 멈추지 않도록 하세요.
 
-**If a user hits Ctrl-C during clean-up operations that might take a long time, skip them.**
-Tell the user what will happen when they hit Ctrl-C again, in case it is a destructive action.
+**사용자가 오래 걸릴 수 있는 정리 작업 중에 Ctrl-C를 누르면, 해당 작업을 건너뛰세요.**
+파괴적인 동작일 수 있는 경우, Ctrl-C를 다시 눌렀을 때 어떤 일이 일어날지 사용자에게 알려주세요.
 
-For example, when quitting Docker Compose, you can hit Ctrl-C a second time to force your containers to stop immediately instead of shutting them down gracefully.
+예를 들어, Docker Compose를 종료할 때 Ctrl-C를 두 번 누르면 컨테이너를 정상적으로 종료하는 대신 즉시 강제 중지할 수 있습니다.
 
 ```
 $  docker-compose up
@@ -1101,200 +1033,204 @@ $  docker-compose up
 ^CGracefully stopping... (press Ctrl+C again to force)
 ```
 
-Your program should expect to be started in a situation where clean-up has not been run.
-(See [Crash-only software: More than meets the eye](https://lwn.net/Articles/191059/).)
+프로그램은 정리가 실행되지 않은 상황에서 시작될 것을 예상해야 합니다.
+([크래시 온리 소프트웨어: 겉보기와는 다르다](https://lwn.net/Articles/191059/) 참조.)
 
-### Configuration {#configuration}
+### 설정 {#configuration}
 
-Command-line tools have lots of different types of configuration, and lots of different ways to supply it (flags, environment variables, project-level config files).
-The best way to supply each piece of configuration depends on a few factors, chief among them _specificity_, _stability_ and _complexity_.
+커맨드라인 도구들은 다양한 종류의 설정과 이를 제공하는 여러 가지 방법(플래그, 환경 변수, 프로젝트 수준의 설정 파일)을 가지고 있습니다.
+각각의 설정을 제공하는 가장 좋은 방법은 몇 가지 요소에 따라 달라지며, 그 중 가장 중요한 것은 _특수성_, _안정성_, _복잡성_입니다.
 
-Configuration generally falls into a few categories:
+설정은 일반적으로 다음과 같은 몇 가지 범주로 나뉩니다:
 
-1.  Likely to vary from one invocation of the command to the next.
+1.  명령어를 실행할 때마다 달라질 가능성이 있는 경우.
 
-    Examples:
+    예시:
 
-    - Setting the level of debugging output
-    - Enabling a safe mode or dry run of a program
+    - 디버깅 출력 수준 설정
+    - 프로그램의 안전 모드 또는 시험 실행 활성화
 
-    Recommendation: **Use [flags](#arguments-and-flags).**
-    [Environment variables](#environment-variables) may or may not be useful as well.
+    권장사항: **[플래그](#arguments-and-flags)를 사용하세요.**
+    [환경 변수](#environment-variables)도 유용할 수 있습니다.
 
-2.  Generally stable from one invocation to the next, but not always.
-    Might vary between projects.
-    Definitely varies between different users working on the same project.
+2.  일반적으로는 실행할 때마다 안정적이지만, 항상 그런 것은 아닌 경우.
+    프로젝트마다 다를 수 있습니다.
+    동일한 프로젝트에서 작업하는 서로 다른 사용자 간에 확실히 차이가 있습니다.
 
-    This type of configuration is often specific to an individual computer.
+    이러한 유형의 설정은 종종 개별 컴퓨터에 특화되어 있습니다.
 
-    Examples:
+    예시:
 
-    - Providing a non-default path to items needed for a program to start
-    - Specifying how or whether color should appear in output
-    - Specifying an HTTP proxy server to route all requests through
+    - 프로그램 시작에 필요한 항목들의 기본값이 아닌 경로 제공
+    - 출력에 색상을 표시할지 또는 어떻게 표시할지 지정
+    - 모든 요청을 라우팅할 HTTP 프록시 서버 지정
 
-    Recommendation: **Use [flags](#arguments-and-flags) and probably [environment variables](#environment-variables) too.**
-    Users may want to set the variables in their shell profile so they apply globally, or in `.env` for a particular project.
+    권장사항: **[플래그](#arguments-and-flags)와 함께 [환경 변수](#environment-variables)도 사용하세요.**
+    사용자들은 전역적으로 적용되도록 셸 프로필에 변수를 설정하거나, 특정 프로젝트의 경우 `.env`에 설정할 수 있습니다.
 
-    If this configuration is sufficiently complex, it may warrant a configuration file of its own, but environment variables are usually good enough.
+    이러한 설정이 충분히 복잡한 경우에는 별도의 설정 파일이 필요할 수 있지만, 일반적으로 환경 변수로도 충분합니다.
 
-3.  Stable within a project, for all users.
+3.  프로젝트 내에서 모든 사용자에게 안정적인 경우.
 
-    This is the type of configuration that belongs in version control.
-    Files like `Makefile`, `package.json` and `docker-compose.yml` are all examples of this.
+    이는 버전 관리에 속하는 설정 유형입니다.
+    `Makefile`, `package.json`, `docker-compose.yml`과 같은 파일들이 이러한 예시입니다.
 
-    Recommendation: **Use a command-specific, version-controlled file.**
+    권장사항: **명령어별 버전 관리 파일을 사용하세요.**
 
-**Follow the XDG-spec.**
-In 2010 the X Desktop Group, now [freedesktop.org](https://freedesktop.org), developed a specification for the location of base directories where config files may be located.
-One goal was to limit the proliferation of dotfiles in a user’s home directory by supporting a general-purpose `~/.config` folder.
-The XDG Base Directory Specification ([full spec](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html), [summary](https://wiki.archlinux.org/index.php/XDG_Base_Directory#Specification)) is supported by yarn, fish, wireshark, emacs, neovim, tmux, and many other projects you know and love.
+**XDG-spec을 따르세요.**
+2010년에 X Desktop Group(현재 [freedesktop.org](https://freedesktop.org))은 설정 파일이 위치할 수 있는 기본 디렉터리의 위치에 대한 사양을 개발했습니다.
+목표 중 하나는 범용 `~/.config` 폴더를 지원하여 사용자의 홈 디렉터리에 있는 도트 파일의 증가를 제한하는 것이었습니다.
+XDG 기본 디렉터리 사양([전체 사양](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html), [요약](https://wiki.archlinux.org/index.php/XDG_Base_Directory#Specification))은 yarn, fish, wireshark, emacs, neovim, tmux 및 여러분이 알고 있고 좋아하는 많은 다른 프로젝트들에서 지원됩니다.
 
-**If you automatically modify configuration that is not your program’s, ask the user for consent and tell them exactly what you’re doing.**
-Prefer creating a new config file (e.g. `/etc/cron.d/myapp`) rather than appending to an existing config file (e.g. `/etc/crontab`).
-If you have to append or modify to a system-wide config file, use a dated comment in that file to delineate your additions.
+**프로그램에 속하지 않은 설정을 자동으로 수정하는 경우, 사용자의 동의를 구하고 정확히 무엇을 하고 있는지 알려주세요.**
+기존 설정 파일(예: `/etc/crontab`)에 추가하는 것보다 새로운 설정 파일(예: `/etc/cron.d/myapp`)을 만드는 것을 선호하세요.
+시스템 전체 설정 파일에 추가하거나 수정해야 하는 경우, 해당 파일에 날짜가 표시된 주석을 사용하여 추가 내용을 구분하세요.
 
-**Apply configuration parameters in order of precedence.**
-Here is the precedence for config parameters, from highest to lowest:
+**우선순위에 따라 설정 매개변수를 적용하세요.**
+다음은 설정 매개변수의 우선순위입니다(높은 순서부터 낮은 순서로):
 
-- Flags
-- The running shell’s environment variables
-- Project-level configuration (eg. `.env`)
-- User-level configuration
-- System wide configuration
+- 플래그
+- 실행 중인 셸의 환경 변수
+- 프로젝트 수준 설정(예: `.env`)
+- 사용자 수준 설정
+- 시스템 전체 설정
 
-### Environment variables {#environment-variables}
+### 환경 변수 {#environment-variables}
 
-**Environment variables are for behavior that _varies with the context_ in which a command is run.**
-The “environment” of an environment variable is the terminal session—the context in which the command is running.
-So, an env var might change each time a command runs, or between terminal sessions on one machine, or between instantiations of one project across several machines.
+**환경 변수는 명령어가 실행되는 _컨텍스트에 따라 달라지는_ 동작을 위한 것입니다.**
+환경 변수의 "환경"은 터미널 세션, 즉 명령어가 실행되는 컨텍스트입니다.
+따라서 환경 변수는 명령어가 실행될 때마다, 또는 한 기기의 터미널 세션 간에, 또는 여러 기기에 걸친 하나의 프로젝트 인스턴스 간에 변경될 수 있습니다.
 
-Environment variables may duplicate the functionality of flags or configuration parameters, or they may be distinct from those things.
-See [Configuration](#configuration) for a breakdown of common types of configuration and recommendations on when environment variables are most appropriate.
+환경 변수는 플래그나 설정 매개변수의 기능을 복제하거나, 이들과 구별될 수 있습니다.
+환경 변수가 가장 적절한 시기에 대한 일반적인 설정 유형과 권장사항의 분석은 [설정](#configuration)을 참조하세요.
 
-**For maximum portability, environment variable names must only contain uppercase letters, numbers, and underscores (and mustn't start with a number).**
-Which means `O_O` and `OWO` are the only emoticons that are also valid environment variable names.
+**최대한의 이식성을 위해, 환경 변수 이름은 대문자, 숫자, 밑줄만 포함해야 하며(숫자로 시작할 수 없음).**
+이는 `O_O`와 `OWO`가 유효한 환경 변수 이름이 될 수 있는 유일한 이모티콘이라는 것을 의미합니다.
 
-**Aim for single-line environment variable values.**
-While multi-line values are possible, they create usability issues with the `env` command.
+**단일 줄 환경 변수 값을 목표로 하세요.**
+여러 줄 값이 가능하긴 하지만, `env` 명령어와 함께 사용성 문제를 발생시킵니다.
 
-**Avoid commandeering widely used names.**
-Here’s a [list of POSIX standard env vars](https://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap08.html).
+**널리 사용되는 이름을 가로채지 마세요.**
+여기 [POSIX 표준 환경 변수 목록](https://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap08.html)이 있습니다.
 
-**Check general-purpose environment variables for configuration values when possible:**
+**가능한 경우 설정 값에 대한 범용 환경 변수를 확인하세요:**
 
-- `NO_COLOR`, to disable color (see [Output](#output))
-- `DEBUG`, to enable more verbose output
-- `EDITOR`, if you need to prompt the user to edit a file or input more than a single line
-- `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY` and `NO_PROXY`, if you’re going to perform network operations
-  (The HTTP library you’re using might already check for these.)
-- `SHELL`, if you need to open up an interactive session of the user's preferred shell
-  (If you need to execute a shell script, use a specific interpreter like `/bin/sh`)
-- `TERM`, `TERMINFO` and `TERMCAP`, if you’re going to use terminal-specific escape sequences
-- `TMPDIR`, if you’re going to create temporary files
-- `HOME`, for locating configuration files
-- `PAGER`, if you want to automatically page output
-- `LINES` and `COLUMNS`, for output that’s dependent on screen size (e.g. tables)
+- `NO_COLOR`, 색상 비활성화(참조: [출력](#output))
+- `DEBUG`, 더 자세한 출력 활성화
+- `EDITOR`, 사용자에게 파일을 편집하거나 한 줄 이상의 입력을 요청해야 하는 경우
+- `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`, `NO_PROXY`, 네트워크 작업을 수행할 경우
+  (사용 중인 HTTP 라이브러리가 이미 이들을 확인할 수 있습니다.)
+- `SHELL`, 사용자가 선호하는 셸의 대화형 세션을 열어야 하는 경우
+  (셸 스크립트를 실행해야 하는 경우 `/bin/sh`와 같은 특정 인터프리터를 사용하세요)
+- `TERM`, `TERMINFO`, `TERMCAP`, 터미널별 이스케이프 시퀀스를 사용할 경우
+- `TMPDIR`, 임시 파일을 생성할 경우
+- `HOME`, 설정 파일 위치 확인
+- `PAGER`, 출력을 자동으로 페이징하려는 경우
+- `LINES`와 `COLUMNS`, 화면 크기에 따라 달라지는 출력용(예: 표)
 
-**Read environment variables from `.env` where appropriate.**
-If a command defines environment variables that are unlikely to change as long as the user is working in a particular directory,
-then it should also read them from a local `.env` file so users can configure it differently for different projects without having to specify them every time.
-Many languages have libraries for reading `.env` files ([Rust](https://crates.io/crates/dotenv), [Node](https://www.npmjs.com/package/dotenv), [Ruby](https://github.com/bkeepers/dotenv)).
+**적절한 경우 `.env`에서 환경 변수를 읽으세요.**
+명령어가 사용자가 특정 디렉터리에서 작업하는 동안 변경될 가능성이 없는 환경 변수를 정의하는 경우,
+사용자가 매번 지정하지 않고도 다른 프로젝트에 대해 다르게 구성할 수 있도록 로컬 `.env` 파일에서 읽어야 합니다.
+많은 언어들이 `.env` 파일을 읽기 위한 라이브러리를 가지고 있습니다([Rust](https://crates.io/crates/dotenv), [Node](https://www.npmjs.com/package/dotenv), [Ruby](https://github.com/bkeepers/dotenv)).
 
-**Don’t use `.env` as a substitute for a proper [configuration file](#configuration).**
-`.env` files have a lot of limitations:
+**적절한 [설정 파일](#configuration)의 대체물로 `.env`를 사용하지 마세요.**
+`.env` 파일에는 많은 제한사항이 있습니다:
 
-- A `.env` file is not commonly stored in source control
-- (Therefore, any configuration stored in it has no history)
-- It has only one data type: string
-- It lends itself to being poorly organized
-- It makes encoding issues easy to introduce
-- It often contains sensitive credentials & key material that would be better stored more securely
+- `.env` 파일은 일반적으로 소스 컨트롤에 저장되지 않습니다
+- (따라서 그 안에 저장된 모든 설정에는 이력이 없습니다)
+- 문자열이라는 단 하나의 데이터 타입만 있습니다
+- 잘 구성되지 않기 쉽습니다
+- 인코딩 문제가 쉽게 발생할 수 있습니다
+- 종종 더 안전하게 저장되어야 할 민감한 자격 증명과 키 자료를 포함합니다
 
-If it seems like these limitations will hamper usability or security, then a dedicated config file might be more appropriate.
+이러한 제한사항이 사용성이나 보안을 저해할 것 같다면, 전용 설정 파일이 더 적절할 수 있습니다.
 
-**Do not read secrets from environment variables.**
-While environment variables may be convenient for storing secrets, they have proven too prone to leakage:
-- Exported environment variables are sent to every process, and from there can easily leak into logs or be exfiltrated
-- Shell substitions like `curl -H "Authorization: Bearer $BEARER_TOKEN"` will leak into globally-readable process state.
-  (cURL offers the `-H @filename` alternative for reading sensitive headers from a file.)
-- Docker container environment variables can be viewed by anyone with Docker daemon access via `docker inspect`
-- Environment variables in systemd units are globally readable via `systemctl show`
+**환경 변수에서 비밀을 읽지 마세요.**
+환경 변수가 비밀을 저장하기에 편리할 수 있지만, 너무 쉽게 유출될 수 있다는 것이 입증되었습니다:
+- 내보낸 환경 변수는 모든 프로세스로 전송되며, 거기서 쉽게 로그로 유출되거나 유출될 수 있습니다
+- `curl -H "Authorization: Bearer $BEARER_TOKEN"`과 같은 셸 치환은 전역적으로 읽을 수 있는 프로세스 상태로 유출됩니다.
+(cURL은 파일에서 민감한 헤더를 읽기 위한 대안으로 `-H @filename`을 제공합니다.)
+- Docker 컨테이너 환경 변수는 Docker 데몬에 접근할 수 있는 모든 사람이 `docker inspect`를 통해 볼 수 있습니다
+- systemd 유닛의 환경 변수는 `systemctl show`를 통해 전역적으로 읽을 수 있습니다
 
-Secrets should only be accepted via credential files, pipes, `AF_UNIX` sockets, secret management services, or another IPC mechanism.
+비밀은 자격 증명 파일, 파이프, `AF_UNIX` 소켓, 비밀 관리 서비스 또는 다른 IPC 메커니즘을 통해서만 받아야 합니다.
 
-### Naming {#naming}
+### 이름 짓기 {#naming}
 
-The name of your program is particularly important on the CLI: your users will be typing it all the time, and it needs to be easy to remember and type.
+> "약어의 집착적인 사용과 대문자 회피를 주목하라. [유닉스]는 반복적 스트레스 장애가 광부들에게 진폐증과 같은 사람들이 발명한 시스템이다.
+> 긴 이름들은 강물에 닳은 돌처럼 세 글자로 닳아 없어진다."
+> — 닐 스티븐슨, _[태초에 커맨드 라인이 있었다](https://web.stanford.edu/class/cs81n/command.txt)_
 
-**Make it a simple, memorable word.**
-But not too generic, or you’ll step on the toes of other commands and confuse users.
-For example, both ImageMagick and Windows used the command `convert`.
+CLI에서 프로그램의 이름은 특히 중요하다: 사용자들이 계속해서 타이핑할 것이므로, 기억하고 입력하기 쉬워야 한다.
 
-**Use only lowercase letters, and dashes if you really need to.**
-`curl` is a good name, `DownloadURL` is not.
+**간단하고 기억하기 쉬운 단어로 만드세요.**
+하지만 너무 일반적이면 다른 명령어들과 충돌하고 사용자들을 혼란스럽게 할 수 있습니다.
+예를 들어, ImageMagick과 Windows 모두 `convert` 명령어를 사용했습니다.
 
-**Keep it short.**
-Users will be typing it all the time.
-Don’t make it _too_ short: the very shortest commands are best reserved for the common utilities used all the time, such as `cd`, `ls`, `ps`.
+**소문자만 사용하고, 꼭 필요한 경우에만 대시를 사용하세요.**
+`curl`은 좋은 이름이지만, `DownloadURL`은 그렇지 않습니다.
 
-**Make it easy to type.**
-Some words flow across the QWERTY keyboard much more easily than others, and it’s not just about brevity.
-`plum` may be short but it’s an awkward, angular dance.
-`apple` trips you up with the double letter.
-`orange` is longer than both, but flows much better.
+**짧게 유지하세요.**
+사용자들이 항상 입력할 것입니다.
+_너무_ 짧게 만들지는 마세요: 가장 짧은 명령어는 `cd`, `ls`, `ps`와 같이 항상 사용되는 일반적인 유틸리티를 위해 예약하는 것이 좋습니다.
 
-_Further reading: [The Poetics of CLI Command Names](https://smallstep.com/blog/the-poetics-of-cli-command-names/)_
+**타이핑하기 쉽게 만드세요.**
+명령어 이름을 하루종일 타이핑할 것으로 예상된다면, 손쉽게 입력할 수 있도록 만드세요.
 
-### Distribution {#distribution}
+실제 사례: Docker Compose가 `docker compose`가 되기 훨씬 전에는 [`plum`](https://github.com/aanand/fig/blob/0eb7d308615bae1ad4be1ca5112ac7b6b6cbfbaf/setup.py#L26)이었습니다.
+이는 한 손으로 타이핑하기에 너무 불편한 것으로 판명되어 즉시 [`fig`](https://github.com/aanand/fig/commit/0cafdc9c6c19dab2ef2795979dc8b2f48f623379)로 이름이 변경되었는데, 이는 더 짧을 뿐만 아니라 훨씬 더 자연스럽게 입력할 수 있었습니다.
 
-**If possible, distribute as a single binary.**
-If your language doesn’t compile to binary executables as standard, see if it has something like [PyInstaller](https://www.pyinstaller.org/).
-If you really can’t distribute as a single binary, use the platform’s native package installer so you aren’t scattering things on disk that can’t easily be removed.
-Tread lightly on the user’s computer.
+_추가 읽을거리: [CLI 명령어 이름의 시학](https://smallstep.com/blog/the-poetics-of-cli-command-names/)_
 
-If you’re making a language-specific tool, such as a code linter, then this rule doesn’t apply—it’s safe to assume the user has an interpreter for that language installed on their computer.
+### 배포 {#distribution}
 
-**Make it easy to uninstall.**
-If it needs instructions, put them at the bottom of the install instructions—one of the most common times people want to uninstall software is right after installing it.
+**가능하다면 단일 바이너리로 배포하세요.**
+만약 사용하는 언어가 기본적으로 바이너리 실행 파일로 컴파일되지 않는다면, [PyInstaller](https://www.pyinstaller.org/)와 같은 도구가 있는지 확인해보세요.
+만약 정말로 단일 바이너리로 배포할 수 없다면, 디스크에 쉽게 제거할 수 없는 파일들을 흩뿌리지 않도록 플랫폼의 기본 패키지 설치 프로그램을 사용하세요.
+사용자의 컴퓨터에 부담을 주지 마세요.
 
-### Analytics {#analytics}
+만약 코드 린터와 같은 특정 언어를 위한 도구를 만든다면, 이 규칙은 적용되지 않습니다—사용자의 컴퓨터에 해당 언어의 인터프리터가 설치되어 있다고 가정해도 됩니다.
 
-Usage metrics can be helpful to understand how users are using your program, how to make it better, and where to focus effort.
-But, unlike websites, users of the command-line expect to be in control of their environment, and it is surprising when programs do things in the background without telling them.
+**제거하기 쉽게 만드세요.**
+만약 설명이 필요하다면, 설치 설명서의 맨 아래에 넣으세요—사람들이 소프트웨어를 제거하고 싶어하는 가장 흔한 시기 중 하나가 설치 직후입니다.
 
-**Do not phone home usage or crash data without consent.**
-Users will find out, and they will be angry.
-Be very explicit about what you collect, why you collect it, how anonymous it is and how you go about anonymizing it, and how long you retain it for.
+### 분석 {#analytics}
 
-Ideally, ask users whether they want to contribute data (“opt-in”).
-If you choose to do it by default (“opt-out”), then clearly tell users about it on your website or first run, and make it easy to disable.
+사용 지표는 사용자들이 프로그램을 어떻게 사용하는지, 어떻게 개선할 수 있는지, 그리고 어디에 노력을 집중해야 하는지 이해하는 데 도움이 될 수 있습니다.
+하지만 웹사이트와 달리, 명령줄 사용자들은 자신의 환경을 통제할 수 있기를 기대하며, 프로그램이 알리지 않고 백그라운드에서 작업을 수행하는 것은 놀라운 일입니다.
 
-Examples of projects that collect usage statistics:
+**동의 없이 사용 데이터나 충돌 데이터를 전송하지 마세요.**
+사용자들은 알아낼 것이고, 화를 낼 것입니다.
+무엇을 수집하는지, 왜 수집하는지, 얼마나 익명성이 보장되는지, 어떻게 익명화하는지, 그리고 얼마나 오래 보관하는지에 대해 매우 명확하게 밝히세요.
 
-- Angular.js [collects detailed analytics using Google Analytics](https://angular.io/analytics), in the name of feature prioritization.
-  You have to explicitly opt in.
-  You can change the tracking ID to point to your own Google Analytics property if you want to track Angular usage inside your organization.
-- Homebrew sends metrics to Google Analytics and has [a nice FAQ](https://docs.brew.sh/Analytics) detailing their practices.
-- Next.js [collects anonymized usage statistics](https://nextjs.org/telemetry) and is enabled by default.
+이상적으로는, 사용자들에게 데이터 제공 여부를 물어보세요("옵트인").
+만약 기본적으로 활성화하기로 선택했다면("옵트아웃"), 웹사이트나 첫 실행 시 사용자들에게 명확히 알리고, 쉽게 비활성화할 수 있게 만드세요.
 
-**Consider alternatives to collecting analytics.**
+사용 통계를 수집하는 프로젝트의 예시:
 
-- Instrument your web docs.
-  If you want to know how people are using your CLI tool, make a set of docs around the use cases you’d like to understand best, and see how they perform over time.
-  Look at what people search for within your docs.
-- Instrument your downloads.
-  This can be a rough metric to understand usage and what operating systems your users are running.
-- Talk to your users.
-  Reach out and ask people how they’re using your tool.
-  Encourage feedback and feature requests in your docs and repos, and try to draw out more context from those who submit feedback.
+- Angular.js는 기능 우선순위 지정을 위해 [Google Analytics를 사용하여 상세한 분석 데이터를 수집합니다](https://angular.io/analytics).
+  명시적으로 동의해야 합니다.
+  조직 내 Angular 사용을 추적하고 싶다면 추적 ID를 자신의 Google Analytics 속성으로 변경할 수 있습니다.
+- Homebrew는 Google Analytics에 지표를 전송하며 [좋은 FAQ](https://docs.brew.sh/Analytics)로 그들의 관행을 자세히 설명합니다.
+- Next.js는 [익명화된 사용 통계를 수집하며](https://nextjs.org/telemetry) 기본적으로 활성화되어 있습니다.
 
-_Further reading: [Open Source Metrics](https://opensource.guide/metrics/)_
+**분석 데이터 수집의 대안을 고려하세요.**
 
-## Further reading
+- 웹 문서에 도구를 삽입하세요.
+  CLI 도구를 사람들이 어떻게 사용하는지 알고 싶다면, 가장 잘 이해하고 싶은 사용 사례에 대한 문서를 만들고, 시간이 지남에 따라 어떻게 수행되는지 확인하세요.
+  사람들이 문서에서 무엇을 검색하는지 살펴보세요.
+- 다운로드에 도구를 삽입하세요.
+  이는 사용량과 사용자들이 어떤 운영 체제를 사용하는지 이해하는 데 대략적인 지표가 될 수 있습니다.
+- 사용자들과 대화하세요.
+  연락하여 사람들에게 도구를 어떻게 사용하는지 물어보세요.
+  문서와 저장소에서 피드백과 기능 요청을 장려하고, 피드백을 제출한 사람들로부터 더 많은 맥락을 이끌어내려고 노력하세요.
 
-- [The Unix Programming Environment](https://en.wikipedia.org/wiki/The_Unix_Programming_Environment), Brian W. Kernighan and Rob Pike
-- [POSIX Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html)
-- [Program Behavior for All Programs](https://www.gnu.org/prep/standards/html_node/Program-Behavior.html), GNU Coding Standards
-- [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46), Jeff Dickey
-- [CLI Style Guide](https://devcenter.heroku.com/articles/cli-style-guide), Heroku
+_추가 읽을거리: [오픈소스 지표](https://opensource.guide/metrics/)_
+
+## 추가 읽을거리
+
+- [유닉스 프로그래밍 환경](https://en.wikipedia.org/wiki/The_Unix_Programming_Environment), Brian W. Kernighan 및 Rob Pike
+- [POSIX 유틸리티 규칙](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html)
+- [모든 프로그램을 위한 프로그램 동작](https://www.gnu.org/prep/standards/html_node/Program-Behavior.html), GNU 코딩 표준
+- [12 요소 CLI 앱](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46), Jeff Dickey
+- [CLI 스타일 가이드](https://devcenter.heroku.com/articles/cli-style-guide), Heroku
