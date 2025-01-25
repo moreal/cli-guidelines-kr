@@ -42,6 +42,7 @@
    src: url(https://fonts.clig.dev/iAWriterMonoS-Bold.woff2) format('woff2');
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 * {
@@ -73,7 +74,7 @@ html {
 
 body {
    font-size: 3.8rem;
-   line-height: 1.4;
+   line-height: 1.5;
 }
 @media (min-width: 600px) {
    body {
@@ -168,6 +169,10 @@ body {
 
 #menu-button {
    display: none;
+
+   font-family: "Noto Serif KR", serif;
+   font-style: normal;
+   font-weight: 500;
 }
 
 @media (max-width: 900px) {
@@ -203,6 +208,10 @@ body {
 }
 
 #TableOfContents ul {
+   font-family: "Noto Serif KR", serif;
+   font-style: normal;
+   font-weight: 500;
+
    list-style: none;
 }
 
@@ -270,6 +279,10 @@ main {
 }
 
 #command-line-interface-guidelines > h1 {
+   font-family: "Noto Serif KR", serif;
+   font-style: normal;
+   font-weight: 500;
+
    position: relative;
    height: 75vh;
    margin: 0 auto;
@@ -281,8 +294,8 @@ main {
    text-align: center;
    font-size: 15.5vw;
    left: -0.025em;
-   line-height: 1;
-   letter-spacing: -0.02em;
+   line-height: 1.1;
+   letter-spacing: -0.09em;
    max-width: 6em;
 }
 @media (max-width: 750px) and (orientation: landscape) {
@@ -343,6 +356,10 @@ section section:after {
 }
 
 h2, h3 {
+   font-family: "Noto Serif KR", serif;
+   font-style: normal;
+   font-weight: 500;
+
    position: -webkit-sticky;
    position: sticky;
    top: 0;
@@ -373,6 +390,7 @@ h2:before, h3:before {
 
 
 h2:before, h3:before {
+   font-family: "Noto Sans KR";
    display: inline-block;
    font-weight: 400;
    padding-right: 0.5em;
@@ -381,6 +399,8 @@ h2:before, h3:before {
 }
 
 h2:after, h3:after {
+   font-family: "Noto Sans KR";
+
    content: " ";
    position: absolute;
    top: calc(1.7em *-0.5);
@@ -554,6 +574,11 @@ body {
 }
 #TableOfContents {
    background: rgba(255,255,255,0.6);
+}
+#TableOfContents > ul {
+   font-family: "Noto Serif KR", serif;
+   font-style: normal;
+   font-weight: 500;
 }
 h2:after, h3:after {
    background: rgba(255,255,255,1);
