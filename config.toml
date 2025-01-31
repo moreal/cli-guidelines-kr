@@ -4,4 +4,6 @@ staticDir = ["assets"]
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
-
+  [markup.tableOfContents]
+    startLevel = 2
+    ordered = false
