@@ -60,6 +60,8 @@
    text-decoration: none;
    text-underline-offset: 0.3em;
    text-decoration-thickness: 1px;
+
+   word-break: keep-all;
 }
 
 html {
