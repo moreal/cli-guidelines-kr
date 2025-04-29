@@ -31,7 +31,7 @@ $ hugo server
 - 번역본과 원본의 대조를 쉽게 하기 위해 `content/_index.md` 에는 추가적인 수정을 하지 않습니다. `content/_index.md` 파일과 `extra/original.md` 파일의 내용이 줄 별로 1대1 대응하도록 합니다.
   - 추가적으로 내용을 넣어야 하는 내용이 있다면 빌드 타임에 CLI 도구를 통해 추가합니다. 예를 들어 clig.kr은 Cloudflare Pages 빌드 과정 중 아래와 같은 명령어로 `extra/credit.md` 를 `foreword` 섹션 상단에 삽입합니다.
     ```
-    perl -0777 -pi -e 'BEGIN { local $/; $credit = `cat extra/credit.md`; chomp($credit); } s/\n\n## 서문 {#foreword}/\n$credit\n\n\n## 서문 {#foreword}/g' content/_index.md
+    cat content/_index.md | npx tsx scripts/inject-credit.ts extra/credit.md > content/_index.md
     ```
 
 ## License
