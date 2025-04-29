@@ -21,8 +21,6 @@ $ hugo server
 
 <!-- TODO: add contact info (how to reach the CLIG creators with questions) -->
 
-아래 번역가이드에 적은대로 대조를 쉽게 하기 위해 
-
 ### 번역 규칙
 
 [moreal](https://github.com/moreal)이 번역하면서 이러면 좋겠다 싶었던 번역 규칙을 남깁니다.
